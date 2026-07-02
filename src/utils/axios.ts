@@ -1,13 +1,18 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 
 import { useAuthStore } from "@/stores/auth.store";
+import type { AuthResponseData } from "@/types/auth.types";
+import { normalizeAuthSession } from "@/utils/authSession";
 
 interface RetryRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
 interface RefreshResponse {
-  accessToken: string;
+  status?: number;
+  message?: string;
+  data?: AuthResponseData;
+  accessToken?: string;
 }
 
 const apiBaseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
@@ -46,14 +51,21 @@ const refreshAccessToken = async (): Promise<string> => {
 
   const response = await refreshClient.post<RefreshResponse>("/auth/refresh", {
     refreshToken: session.refreshToken,
+    refresh_token: session.refreshToken,
   });
 
-  useAuthStore.getState().setSession({
-    ...session,
-    accessToken: response.data.accessToken,
-  });
+  const normalizedSession = normalizeAuthSession(
+    response.data.data ?? { accessToken: response.data.accessToken },
+    session,
+  );
 
-  return response.data.accessToken;
+  if (!normalizedSession.accessToken) {
+    throw new Error("Token de acesso ausente na resposta de refresh");
+  }
+
+  useAuthStore.getState().setSession(normalizedSession);
+
+  return normalizedSession.accessToken;
 };
 
 httpClient.interceptors.response.use(
