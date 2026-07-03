@@ -33,11 +33,13 @@ export function CompanyCard(data: Company) {
           </CardDescription>
           <CardAction>
             <DropdownMenu>
-              <DropdownMenuTrigger>
-                <Button variant="ghost" size="sm">
-                  <EllipsisVertical />
-                </Button>
-              </DropdownMenuTrigger>
+              <DropdownMenuTrigger
+                render={(props) => (
+                  <Button variant="ghost" size="sm" {...props}>
+                    <EllipsisVertical />
+                  </Button>
+                )}
+              />
               <DropdownMenuContent>
                 <DropdownMenuGroup>
                   <DropdownMenuItem>
@@ -52,12 +54,18 @@ export function CompanyCard(data: Company) {
         <CardContent className="space-y-2">
           <p className="text-xs text-muted-foreground">CNPJ: {data.cnpj}</p>
           <p className="text-xs text-muted-foreground">
-            Situação: {data.status}{" "}
+            Situação:{" "}
             <span
-              className={`relative inline-flex size-3 rounded-full ${
-                data.status === "ativo" ? "bg-green-500" : "bg-red-500"
-              } animate-ping`}
-            ></span>
+              className={`${
+                data.status === "ativo"
+                  ? "text-green-500"
+                  : data.status === "inativo"
+                    ? "text-red-500"
+                    : "text-yellow-500"
+              }`}
+            >
+              {data.status}{" "}
+            </span>
           </p>
           <p className="text-xs text-muted-foreground">
             Registro Estadual: {data.registroEstadual || "N/A"}

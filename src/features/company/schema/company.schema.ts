@@ -1,3 +1,4 @@
+import { isValidCNPJ } from "@/utils/validators";
 import z from "zod/v4";
 
 export const companySchema = z.object({
@@ -5,15 +6,22 @@ export const companySchema = z.object({
   email: z.email("Informe um e-mail válido"),
   cnpj: z
     .string()
-    .min(14, "O CNPJ deve ter no mínimo 14 caracteres")
-    .max(18, "O CNPJ deve ter no máximo 18 caracteres"),
+    .min(1, "O CNPJ é obrigatório")
+    .transform((val) => val.replace(/\D/g, ""))
+    .refine((val) => val.length === 14, {
+      message: "O CNPJ deve conter exatamente 14 números",
+    })
+    .refine(isValidCNPJ, {
+      message: "CNPJ inválido",
+    }),
   registroEstadual: z.string().optional(),
   registroMunicipal: z.string().optional(),
   website: z.url("Informe uma URL válida").optional(),
   status: z.enum(["ATIVO", "INATIVO"], "O status deve ser ATIVO ou INATIVO"),
 });
 
-export const enderecoSchema = z.object({
+export const addressSchema = z.object({
+  id: z.string().optional(),
   logradouro: z.string().min(1, "O logradouro é obrigatório"),
   numero: z.string().min(1, "O número é obrigatório"),
   bairro: z.string().min(1, "O bairro é obrigatório"),
@@ -29,7 +37,7 @@ export const enderecoSchema = z.object({
     .max(9, "O CEP deve ter no máximo 9 caracteres"),
 });
 
-export const contatoSchema = z.object({
+export const contactSchema = z.object({
   tipo: z.enum(
     ["whatsapp", "telefone"],
     "O tipo de contato deve ser whats ou TELEFONE",

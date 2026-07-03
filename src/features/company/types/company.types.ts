@@ -48,3 +48,28 @@ export interface CompanyResponse {
     };
   };
 }
+
+export interface CompanyFormValues {
+  nome: string;
+  email: string;
+  cnpj: string;
+  registroEstadual?: string;
+  registroMunicipal?: string;
+  website?: string;
+  status: "ATIVO" | "INATIVO";
+  endereco: {
+    logradouro: string;
+    numero: string;
+    complemento?: string;
+    bairro: string;
+    cidade: string;
+    uf: string;
+    pais: string;
+    cep: string;
+  }[];
+  contato: {
+    tipo: "whatsapp" | "telefone";
+    valor: string;
+    principal?: boolean;
+  }[];
+}

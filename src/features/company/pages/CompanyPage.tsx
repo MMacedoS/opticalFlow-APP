@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import {
   Card,
   CardAction,
@@ -7,11 +7,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Building2 } from "lucide-react";
 import { CompanyCard } from "../components/CompanyCard";
 import { PaginationIconsOnly } from "@/components/paginationOnly/PaginationIconsOnly";
 import { useCompanyList } from "../hooks/useCompanyList";
-import { useState } from "react";
+import { CompanyForm } from "../components/CompanyForm";
 
 export function CompanyPage() {
   const [filters, setFilters] = useState({
@@ -42,10 +41,7 @@ export function CompanyPage() {
         <CardTitle>Empresas</CardTitle>
         <CardDescription>Lista de empresas cadastradas</CardDescription>
         <CardAction>
-          <Button variant="default" size="sm">
-            <Building2 />
-            <span>Cadastar</span>
-          </Button>
+          <CompanyForm />
         </CardAction>
       </CardHeader>
       <CardContent className="space-y-4">

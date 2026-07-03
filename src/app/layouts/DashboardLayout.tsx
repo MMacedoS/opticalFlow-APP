@@ -7,6 +7,7 @@ import {
 import { AppFooter } from "./components/AppFooter";
 import { AppHeader } from "./components/AppHeader";
 import { AppSidebar } from "./components/AppSidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 export function DashboardLayout() {
   return (
@@ -18,6 +19,7 @@ export function DashboardLayout() {
           <section className="flex-1">
             <Outlet />
           </section>
+          <Toaster richColors position="top-right" />
           <AppFooter />
         </div>
       </SidebarInset>
