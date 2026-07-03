@@ -1,4 +1,4 @@
-import type { FormEventHandler } from "react";
+import type { SubmitEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +19,7 @@ interface LoginFormProps {
   errorMessage?: string;
   onEmailChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
-  onSubmit: FormEventHandler<HTMLFormElement>;
+  onSubmit: (event: SubmitEvent<HTMLFormElement>) => void;
 }
 
 export function LoginForm({
