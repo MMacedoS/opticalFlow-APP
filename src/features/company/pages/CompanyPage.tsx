@@ -22,19 +22,11 @@ export function CompanyPage() {
 
   const { data, isLoading, isError } = useCompanyList(filters);
 
-  const handleSearchChange = (searchTerm: string) => {
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      search: searchTerm,
-      page: 1,
-    }));
-  };
-
   const handleLimitChange = (newLimit: number) => {
     setFilters((prev) => ({
       ...prev,
       limit: newLimit,
-      page: 1, // Sempre reseta para a primeira página ao alterar a quantidade de itens
+      page: 1,
     }));
   };
 
@@ -42,7 +34,6 @@ export function CompanyPage() {
     setFilters((prev) => ({ ...prev, page: newPage }));
   };
 
-  // Pega as informações de paginação vindas do seu backend (segundo a interface CompanyResponse)
   const paginationData = data?.data?.pagination;
 
   return (
@@ -84,11 +75,10 @@ export function CompanyPage() {
           ))}
         </div>
 
-        {/* 3. Injete as propriedades conectando o estado à paginação */}
         <PaginationIconsOnly
           currentPage={filters.page}
           currentLimit={filters.limit}
-          totalPages={paginationData?.pages ?? 1} // Pega a propriedade 'pages' da sua interface
+          totalPages={paginationData?.pages ?? 1}
           onPageChange={handlePageChange}
           onLimitChange={handleLimitChange}
         />
