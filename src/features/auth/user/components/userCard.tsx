@@ -7,32 +7,23 @@ import {
 } from "@/app/layouts/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { EllipsisVertical, SquareCheck, Trash2 } from "lucide-react";
-
-import type { Company } from "../types/company.types";
-import { CompanyForm } from "./CompanyForm";
-import { AlertConfirm } from "@/components/alert/AlertConfirm";
-import { useState } from "react";
-import { useCompanyStatus } from "../hooks/useCompanyStatus";
-import { useCompanyDelete } from "../hooks/useCompanyDelete";
+import { CardList } from "@/components/cards/CardList";
+import type { User } from "../types/user.types";
 import { maskCNPJ } from "@/utils/masks";
 import { WhatsappButton } from "@/components/contactButton/Whatsapp";
-import { CardList } from "@/components/cards/CardList";
+import { useState } from "react";
+import { AlertConfirm } from "@/components/alert/AlertConfirm";
 
-export function CompanyCard(data: Company) {
+export function UserCard(data: User) {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [textAlert, setTextAlert] = useState("");
   const [descriptionAlert, setDescriptionAlert] = useState("");
 
   const [actionConfirm, setActionConfirm] = useState<() => void>(() => {});
 
-  const deleteCompany = useCompanyDelete();
-
   const handleExcluir = () => {
-    deleteCompany.mutate(data.id as string);
     setIsAlertOpen(false);
   };
-
-  const changeStatusApi = useCompanyStatus();
 
   const handleMudarStatus = ({
     newStatus,
@@ -41,10 +32,7 @@ export function CompanyCard(data: Company) {
     newStatus: string;
     id: string;
   }) => {
-    changeStatusApi.mutate({
-      id: id,
-      status: newStatus as "ativo" | "inativo",
-    });
+    console.log(`Mudar status do usuário ${id} para ${newStatus}`);
     setIsAlertOpen(false);
   };
 
@@ -58,12 +46,11 @@ export function CompanyCard(data: Company) {
     setActionConfirm(() => confirmFn);
     setIsAlertOpen(true);
   };
-
   return (
     <>
       <CardList
-        title={data.nome}
-        description={data.website || "N/A"}
+        title={data.username}
+        description={data.email}
         action={
           <>
             <DropdownMenu>
@@ -79,8 +66,8 @@ export function CompanyCard(data: Company) {
                   <DropdownMenuItem
                     onClick={() =>
                       abrirAlertaGenerico(
-                        `Tem certeza de que deseja EXCLUIR a empresa?`,
-                        `A empresa "${data.nome}" será excluída permanentemente.`,
+                        "Tem certeza de que deseja EXCLUIR o usuário?",
+                        `O usuário "${data.username}" será excluído.`,
                         () => handleExcluir(),
                       )
                     }
@@ -96,16 +83,16 @@ export function CompanyCard(data: Company) {
         content={
           <>
             <p className="text-xs text-muted-foreground">
-              CNPJ: {maskCNPJ(data.cnpj) || "N/A"}
+              CNPJ: {maskCNPJ(data.empresa?.cnpj) || "N/A"}
             </p>
             <p className="text-xs text-muted-foreground">
               Telefone:{" "}
-              {data.contatos.length > 0
-                ? data.contatos[0].contato || "N/A"
+              {data.empresa?.contatos && data.empresa.contatos.length > 0
+                ? data.empresa.contatos[0].contato || "N/A"
                 : "N/A"}
-              {data.contatos.length > 0 && data.contatos[0].tipo ? (
+              {data.empresa?.contatos && data.empresa.contatos.length > 0 ? (
                 <WhatsappButton
-                  numero="${data.contatos[0].contato}"
+                  numero="${data.empresa.contatos[0].contato}"
                   message="Olá, gostaria de entrar em contato com a empresa ${data.nome}."
                 />
               ) : (
@@ -126,12 +113,6 @@ export function CompanyCard(data: Company) {
                 {data.status}{" "}
               </span>
             </p>
-            <p className="text-xs text-muted-foreground">
-              Registro Estadual: {data.registro_estadual || "N/A"}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Registro Municipal: {data.registro_municipal || "N/A"}
-            </p>
           </>
         }
         footer={
@@ -142,7 +123,7 @@ export function CompanyCard(data: Company) {
                 onClick={() =>
                   abrirAlertaGenerico(
                     "Tem certeza de que deseja DESATIVAR a empresa?",
-                    `A empresa "${data.nome}" será desativada.`,
+                    `A empresa "${data.username}" será desativada.`,
                     () =>
                       handleMudarStatus({
                         newStatus: "inativo",
@@ -161,7 +142,7 @@ export function CompanyCard(data: Company) {
                 onClick={() =>
                   abrirAlertaGenerico(
                     "Tem certeza de que deseja ATIVAR a empresa?",
-                    `A empresa "${data.nome}" será ativada.`,
+                    `A empresa "${data.username}" será ativada.`,
                     () =>
                       handleMudarStatus({
                         newStatus: "ativo",
@@ -174,7 +155,6 @@ export function CompanyCard(data: Company) {
                 Ativar
               </Button>
             )}
-            <CompanyForm initialData={data} />
           </>
         }
         itemChildren={
@@ -184,7 +164,7 @@ export function CompanyCard(data: Company) {
               description={descriptionAlert}
               isOpen={isAlertOpen}
               onClose={() => setIsAlertOpen(false)}
-              onConfirm={actionConfirm} // Executa a função que foi guardada no estado
+              onConfirm={actionConfirm}
             />
           </>
         }

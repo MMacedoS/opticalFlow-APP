@@ -5,6 +5,7 @@ import {
   CardAction,
   CardDescription,
   CardTitle,
+  CardFooter,
 } from "../ui/card";
 
 export function CardPage({
@@ -12,10 +13,12 @@ export function CardPage({
   description,
   children,
   action,
+  footer,
 }: {
   title: string;
   description: string;
   children: React.ReactNode;
+  footer?: React.ReactNode;
   action?: React.ReactNode;
 }) {
   return (
@@ -26,6 +29,7 @@ export function CardPage({
         <CardAction>{action}</CardAction>
       </CardHeader>
       <CardContent className="space-y-4">{children}</CardContent>
+      <CardFooter className="flex justify-end">{footer}</CardFooter>
     </Card>
   );
 }

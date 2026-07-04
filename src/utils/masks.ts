@@ -1,4 +1,5 @@
-export function maskCNPJ(value: string): string {
+export function maskCNPJ(value?: string): string {
+  if (!value) return "";
   const digits = value.replace(/\D/g, "");
 
   return digits
@@ -9,13 +10,15 @@ export function maskCNPJ(value: string): string {
     .substring(0, 18);
 }
 
-export function maskCEP(value: string): string {
+export function maskCEP(value?: string): string {
+  if (!value) return "";
   const digits = value.replace(/\D/g, "");
 
   return digits.replace(/^(\d{5})(\d)/, "$1-$2").substring(0, 9);
 }
 
-export function maskPhone(value: string): string {
+export function maskPhone(value?: string): string {
+  if (!value) return "";
   const digits = value.replace(/\D/g, "");
 
   if (digits.length <= 10) {
