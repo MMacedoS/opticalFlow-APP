@@ -4,6 +4,7 @@ import { DashboardLayout } from "@/app/layouts/DashboardLayout";
 import { PrivateRouteGuard } from "@/app/router/RouteGuards";
 import { DashboardPage } from "@/features/dashboard";
 import { CompanyPage } from "@/features/company";
+import { UserPage } from "@/features/auth/user";
 
 export const privateRoutes: RouteObject[] = [
   {
@@ -19,6 +20,10 @@ export const privateRoutes: RouteObject[] = [
           {
             path: "/empresas/*",
             element: <CompanyPage />,
+          },
+          {
+            path: "/usuarios/*",
+            element: <UserPage />,
           },
         ],
       },

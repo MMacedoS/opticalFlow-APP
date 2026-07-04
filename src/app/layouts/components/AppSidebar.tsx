@@ -25,11 +25,12 @@ import {
 } from "@/app/layouts/components/ui/sidebar";
 import { useAuthStore } from "@/stores/auth.store";
 import { hasRouteAccess } from "@/utils/authorization";
+import type { LucideIcon } from "lucide-react";
 
-function SidebarItemIcon({ label }: { label: string }) {
+export function SidebarItemIcon({ icon: Icon }: { icon: LucideIcon }) {
   return (
     <span className="flex size-5 items-center justify-center rounded-md bg-sidebar-foreground/10 text-[10px] font-semibold text-sidebar-foreground">
-      {label.slice(0, 3).toUpperCase()}
+      <Icon className="size-3.5" />
     </span>
   );
 }
@@ -88,7 +89,7 @@ export function AppSidebar() {
                       className="rounded-xl"
                       render={<NavLink to={item.href} />}
                     >
-                      <SidebarItemIcon label={item.label} />
+                      <SidebarItemIcon icon={item.icon} />
                       <span className="group-data-[collapsible=icon]:hidden">
                         {item.label}
                       </span>
