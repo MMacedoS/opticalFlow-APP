@@ -35,6 +35,7 @@ export function CompanyForm({ initialData }: CompanyFormProps) {
       <DialogForm
         title={isEditing ? "Editar" : "Cadastrar"}
         icon={isEditing ? Pencil : Building2}
+        variant={isEditing ? "outline" : "default"}
         children={
           <>
             <CardPage

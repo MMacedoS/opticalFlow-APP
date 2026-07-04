@@ -10,9 +10,10 @@ import { EllipsisVertical, SquareCheck, Trash2 } from "lucide-react";
 import { CardList } from "@/components/cards/CardList";
 import type { User } from "../types/user.types";
 import { maskCNPJ } from "@/utils/masks";
-import { WhatsappButton } from "@/components/contactButton/Whatsapp";
 import { useState } from "react";
 import { AlertConfirm } from "@/components/alert/AlertConfirm";
+import { useUserStatus } from "../hooks/useUserStatus";
+import { UserForm } from "./userForm";
 
 export function UserCard(data: User) {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -25,6 +26,8 @@ export function UserCard(data: User) {
     setIsAlertOpen(false);
   };
 
+  const changeStatusApi = useUserStatus();
+
   const handleMudarStatus = ({
     newStatus,
     id,
@@ -32,7 +35,10 @@ export function UserCard(data: User) {
     newStatus: string;
     id: string;
   }) => {
-    console.log(`Mudar status do usuário ${id} para ${newStatus}`);
+    changeStatusApi.mutate({
+      id: id,
+      status: newStatus as "ativo" | "inativo",
+    });
     setIsAlertOpen(false);
   };
 
@@ -84,20 +90,6 @@ export function UserCard(data: User) {
           <>
             <p className="text-xs text-muted-foreground">
               CNPJ: {maskCNPJ(data.empresa?.cnpj) || "N/A"}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Telefone:{" "}
-              {data.empresa?.contatos && data.empresa.contatos.length > 0
-                ? data.empresa.contatos[0].contato || "N/A"
-                : "N/A"}
-              {data.empresa?.contatos && data.empresa.contatos.length > 0 ? (
-                <WhatsappButton
-                  numero="${data.empresa.contatos[0].contato}"
-                  message="Olá, gostaria de entrar em contato com a empresa ${data.nome}."
-                />
-              ) : (
-                ""
-              )}
             </p>
             <p className="text-xs text-muted-foreground">
               Situação:{" "}
@@ -155,6 +147,7 @@ export function UserCard(data: User) {
                 Ativar
               </Button>
             )}
+            <UserForm initialValues={data} />
           </>
         }
         itemChildren={

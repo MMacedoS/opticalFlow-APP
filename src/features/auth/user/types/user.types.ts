@@ -31,8 +31,8 @@ export interface UserResponse {
 
 export interface UserFormValues {
   id?: string;
-  nome: string;
+  username: string;
   email: string;
-  senha?: string;
+  senha?: string | undefined;
   status: "ativo" | "inativo";
 }

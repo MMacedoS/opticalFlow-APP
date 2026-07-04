@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useUserList } from "../hooks/useUserList";
 import { UserCard } from "../components/userCard";
 import { PaginationIconsOnly } from "@/components/paginationOnly/PaginationIconsOnly";
+import { UserForm } from "../components/userForm";
 
 export function UserPage() {
   const [filters, setFilters] = useState({
@@ -31,7 +32,7 @@ export function UserPage() {
     <CardPage
       title="Usuarios"
       description="Lista de usuarios cadastrados"
-      action={<></>}
+      action={<UserForm />}
       children={
         <>
           <div className="mb-2">
