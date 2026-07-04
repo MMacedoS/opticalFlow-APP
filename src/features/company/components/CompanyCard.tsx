@@ -16,9 +16,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { EllipsisVertical, SquarePen, Trash2 } from "lucide-react";
+import { EllipsisVertical, Trash2 } from "lucide-react";
 
 import type { Company } from "../types/company.types";
+import { CompanyForm } from "./CompanyForm";
 
 export function CompanyCard(data: Company) {
   return (
@@ -68,18 +69,15 @@ export function CompanyCard(data: Company) {
             </span>
           </p>
           <p className="text-xs text-muted-foreground">
-            Registro Estadual: {data.registroEstadual || "N/A"}
+            Registro Estadual: {data.registro_estadual || "N/A"}
           </p>
           <p className="text-xs text-muted-foreground">
-            Registro Municipal: {data.registroMunicipal || "N/A"}
+            Registro Municipal: {data.registro_municipal || "N/A"}
           </p>
         </CardContent>
         <Separator className="my-2" />
         <CardFooter className="flex justify-end">
-          <Button variant="default" size="sm">
-            <SquarePen />
-            <span>Editar</span>
-          </Button>
+          <CompanyForm initialData={data} />
         </CardFooter>
       </Card>
     </>

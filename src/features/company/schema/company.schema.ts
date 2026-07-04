@@ -1,25 +1,6 @@
 import { isValidCNPJ } from "@/utils/validators";
 import z from "zod/v4";
 
-export const companySchema = z.object({
-  nome: z.string().min(1, "O nome da empresa é obrigatório"),
-  email: z.email("Informe um e-mail válido"),
-  cnpj: z
-    .string()
-    .min(1, "O CNPJ é obrigatório")
-    .transform((val) => val.replace(/\D/g, ""))
-    .refine((val) => val.length === 14, {
-      message: "O CNPJ deve conter exatamente 14 números",
-    })
-    .refine(isValidCNPJ, {
-      message: "CNPJ inválido",
-    }),
-  registroEstadual: z.string().optional(),
-  registroMunicipal: z.string().optional(),
-  website: z.url("Informe uma URL válida").optional(),
-  status: z.enum(["ATIVO", "INATIVO"], "O status deve ser ATIVO ou INATIVO"),
-});
-
 export const addressSchema = z.object({
   id: z.string().optional(),
   logradouro: z.string().min(1, "O logradouro é obrigatório"),
@@ -38,10 +19,32 @@ export const addressSchema = z.object({
 });
 
 export const contactSchema = z.object({
+  id: z.string().optional(),
   tipo: z.enum(
     ["whatsapp", "telefone"],
     "O tipo de contato deve ser whats ou TELEFONE",
   ),
-  valor: z.string().min(1, "O valor do contato é obrigatório"),
+  contato: z.string().min(1, "O valor do contato é obrigatório"),
   principal: z.boolean().optional(),
+});
+
+export const companySchema = z.object({
+  nome: z.string().min(1, "O nome da empresa é obrigatório"),
+  razao: z.string().min(1, "A razão social é obrigatória"),
+  email: z.email("Informe um e-mail válido"),
+  cnpj: z
+    .string()
+    .min(1, "O CNPJ é obrigatório")
+    .transform((val) => val.replace(/\D/g, ""))
+    .refine((val) => val.length === 14, {
+      message: "O CNPJ deve conter exatamente 14 números",
+    })
+    .refine(isValidCNPJ, {
+      message: "CNPJ inválido",
+    }),
+  registro_estadual: z.string().optional(),
+  registro_municipal: z.string().optional(),
+  website: z.url("Informe uma URL válida").optional(),
+  enderecos: z.array(addressSchema).optional(),
+  contatos: z.array(contactSchema).optional(),
 });

@@ -1,6 +1,7 @@
+import { Controller } from "react-hook-form";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Building2 } from "lucide-react";
+import { Building2, Pencil } from "lucide-react";
 import { useCompanyForm } from "../hooks/useCompanyForm";
 import {
   Card,
@@ -16,35 +17,51 @@ import {
   FieldLabel,
   FieldError,
 } from "@/components/ui/field";
-import { Controller } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { maskCNPJ } from "@/utils/masks";
 import { AddressForm } from "./AddressForm";
 import { Separator } from "@/components/ui/separator";
-import type { Endereco } from "../types/company.types";
-import { useState } from "react";
+import { ContactForm } from "./ContactForm";
+import type { Company } from "../types/company.types";
 
-export function CompanyForm() {
-  const { form, onSubmit, isPending, errorMessage } = useCompanyForm();
-  const [enderecos, setEnderecos] = useState<Endereco[]>([]);
+type CompanyFormProps = {
+  initialData?: Company;
+};
+
+export function CompanyForm({ initialData }: CompanyFormProps) {
+  const { form, onSubmit, isPending, errorMessage } =
+    useCompanyForm(initialData);
+
+  const isEditing = !!initialData;
+
+  const enderecos = form.watch("enderecos") || [];
+  const contatos = form.watch("contatos") || [];
 
   return (
     <>
       <Dialog>
         <DialogTrigger
-          className={buttonVariants({ variant: "default", size: "sm" })}
+          className={buttonVariants({
+            variant: isEditing ? "ghost" : "default",
+            size: "sm",
+          })}
         >
-          <Building2 />
-          <span>Cadastar</span>
+          {isEditing ? (
+            <Pencil className="size-4" />
+          ) : (
+            <Building2 className="size-4" />
+          )}
+          <span>{isEditing ? "Editar" : "Cadastrar"}</span>
         </DialogTrigger>
         <DialogContent className="max-w-300! mt-4 max-h-dvh overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-border/50 scrollbar-track-transparent">
           <Card>
             <CardHeader>
               <CardTitle className="text-lg font-semibold tracking-tight">
-                Cadastrar Empresa
+                {isEditing ? "Editar Empresa" : "Cadastrar Empresa"}
               </CardTitle>
               <CardDescription className="text-sm text-muted-foreground">
-                Preencha os campos abaixo para cadastrar uma nova empresa.
+                Preencha os campos abaixo para{" "}
+                {isEditing ? "editar a empresa" : "cadastrar uma nova empresa"}.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -64,6 +81,28 @@ export function CompanyForm() {
                             id="form-company-nome"
                             aria-invalid={fieldState.invalid}
                             placeholder="nome da empresa"
+                            autoComplete="off"
+                          />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+
+                    <Controller
+                      name="razao"
+                      control={form.control}
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
+                          <FieldLabel htmlFor="form-company-razao">
+                            Razão Social
+                          </FieldLabel>
+                          <Input
+                            {...field}
+                            id="form-company-razao"
+                            aria-invalid={fieldState.invalid}
+                            placeholder="Razão social da empresa"
                             autoComplete="off"
                           />
                           {fieldState.invalid && (
@@ -93,6 +132,8 @@ export function CompanyForm() {
                         </Field>
                       )}
                     />
+                  </div>
+                  <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
                     <Controller
                       name="cnpj"
                       control={form.control}
@@ -119,10 +160,8 @@ export function CompanyForm() {
                         </Field>
                       )}
                     />
-                  </div>
-                  <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                     <Controller
-                      name="registroEstadual"
+                      name="registro_estadual"
                       control={form.control}
                       render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid}>
@@ -143,7 +182,7 @@ export function CompanyForm() {
                       )}
                     />
                     <Controller
-                      name="registroMunicipal"
+                      name="registro_municipal"
                       control={form.control}
                       render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid}>
@@ -189,11 +228,24 @@ export function CompanyForm() {
 
                 <Separator className="my-4" />
 
-                <AddressForm
-                  className="mt-4"
-                  data={enderecos}
-                  onChange={setEnderecos}
-                />
+                <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2">
+                  <AddressForm
+                    className="mt-4"
+                    data={enderecos}
+                    // Atualiza o React Hook Form quando a lista mudar
+                    onChange={(data) =>
+                      form.setValue("enderecos", data, { shouldValidate: true })
+                    }
+                  />
+                  <ContactForm
+                    className="mt-4"
+                    data={contatos}
+                    // Atualiza o React Hook Form quando a lista mudar
+                    onChange={(data) =>
+                      form.setValue("contatos", data, { shouldValidate: true })
+                    }
+                  />
+                </div>
               </form>
             </CardContent>
             <CardFooter className="flex justify-end">
@@ -216,7 +268,7 @@ export function CompanyForm() {
                 disabled={isPending}
                 className="bg-primary/80 text-white hover:bg-primary/90 hover:text-primary-foreground"
               >
-                Cadastrar
+                {isPending ? "Salvando..." : "Salvar"}
               </Button>
             </CardFooter>
             {errorMessage && (

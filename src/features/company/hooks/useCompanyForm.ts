@@ -5,21 +5,26 @@ import { companySchema } from "../schema/company.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMemo } from "react";
+import { useCompanyUpdate } from "./useCompanyUpdate";
 
-export function useCompanyForm() {
+export function useCompanyForm(initialDate?: CompanyFormValues) {
   const companyMutation = useCompanyCreate();
+  const updateMutation = useCompanyUpdate();
 
   const form = useForm<z.infer<typeof companySchema>>({
     resolver: zodResolver(companySchema),
     defaultValues: {
       nome: "",
+      razao: "",
       cnpj: "",
       email: "",
-      registroEstadual: undefined,
-      registroMunicipal: undefined,
+      registro_estadual: undefined,
+      registro_municipal: undefined,
       website: undefined,
-      status: "ATIVO",
+      enderecos: [],
+      contatos: [],
     },
+    values: initialDate,
   });
 
   const errorMessage = useMemo(() => {
@@ -28,14 +33,21 @@ export function useCompanyForm() {
     if (errors.cnpj) return errors.cnpj.message;
     if (errors.email) return errors.email.message;
     if (errors.website) return errors.website.message;
-    if (errors.status) return errors.status.message;
     return null;
   }, [form.formState.errors]);
 
   const onSubmit = form.handleSubmit(async (values) => {
     try {
-      await companyMutation.mutateAsync(values as CompanyFormValues);
-      form.reset();
+      if (initialDate) {
+        await updateMutation.mutateAsync({
+          id: initialDate.id,
+          ...values,
+        } as CompanyFormValues);
+      }
+      if (!initialDate) {
+        await companyMutation.mutateAsync(values as CompanyFormValues);
+        form.reset();
+      }
     } catch (error) {
       console.error(error);
     }
@@ -44,7 +56,7 @@ export function useCompanyForm() {
   return {
     form,
     onSubmit,
-    isPending: companyMutation.isPending,
+    isPending: companyMutation.isPending || updateMutation.isPending,
     errorMessage,
   };
 }

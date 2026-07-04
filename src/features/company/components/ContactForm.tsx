@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm, Controller, useWatch } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -11,58 +11,56 @@ import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { ChevronsUpDown, Plus, Pencil, Trash2, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { Endereco } from "../types/company.types";
-import { addressSchema } from "../schema/company.schema";
-import { useAutoFillAddress } from "../hooks/useAutoFillAddress";
+import type { Contato } from "../types/company.types";
+import { contactSchema } from "../schema/company.schema";
+import {
+  Select,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { maskPhone } from "@/utils/masks";
 
-type ShippingAddressProp = {
-  data?: Endereco[];
-  onChange?: (data: Endereco[]) => void;
+type ContactProp = {
+  data?: Contato[];
+  onChange?: (data: Contato[]) => void;
   className?: string;
 };
 
-type AddressFormValues = z.infer<typeof addressSchema>;
+type ContactFormValues = z.infer<typeof contactSchema>;
 
 const DEFAULT_FORM_VALUES = {
   id: undefined,
-  logradouro: "",
-  numero: "",
-  bairro: "",
-  cidade: "",
-  uf: "",
-  cep: "",
-  pais: "Brasil",
+  tipo: "whatsapp" as const,
+  contato: "",
+  principal: false, // Adicionado para garantir o estado inicial do Switch
 };
 
-export function AddressForm({
-  data = [],
-  onChange,
-  className,
-}: ShippingAddressProp) {
+export function ContactForm({ data = [], onChange, className }: ContactProp) {
   const [isOpen, setIsOpen] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
-  const form = useForm<AddressFormValues>({
-    resolver: zodResolver(addressSchema),
+  const form = useForm<ContactFormValues>({
+    resolver: zodResolver(contactSchema),
     defaultValues: DEFAULT_FORM_VALUES,
   });
 
-  const cepValue = useWatch({
-    control: form.control,
-    name: "cep",
-  });
-
-  useAutoFillAddress(cepValue, form.setValue);
-
-  const handleSaveAddress = (values: AddressFormValues) => {
-    const updatedList: Endereco[] =
+  const handleSaveContact = (values: ContactFormValues) => {
+    const updatedList: Contato[] =
       editingIndex !== null
         ? data.map((item, index) =>
             index === editingIndex
-              ? ({ ...values, id: item.id } as Endereco)
+              ? ({ ...values, id: item.id } as Contato)
               : item,
           )
-        : [...data, { ...values } as Endereco];
+        : [
+            ...data,
+            {
+              ...values,
+            } as Contato,
+          ];
 
     onChange?.(updatedList);
 
@@ -75,10 +73,10 @@ export function AddressForm({
 
   const handleEdit = (index: number) => {
     setEditingIndex(index);
-    const address = data[index];
+    const contact = data[index];
     form.reset({
-      ...address,
-      id: address.id?.toString(),
+      ...contact,
+      id: contact.id?.toString(),
     });
     setIsOpen(true);
   };
@@ -103,12 +101,10 @@ export function AddressForm({
       {/* Cabeçalho */}
       <div className="flex items-center justify-between gap-4 border-b pb-2 mb-4">
         <div>
-          <h4 className="text-sm font-semibold">Endereços</h4>
+          <h4 className="text-sm font-semibold">Contato</h4>
           <p className="text-xs text-muted-foreground">
             {data.length}{" "}
-            {data.length === 1
-              ? "endereço cadastrado"
-              : "endereços cadastrados"}
+            {data.length === 1 ? "contato cadastrado" : "contatos cadastrados"}
           </p>
         </div>
         <CollapsibleTrigger
@@ -123,82 +119,69 @@ export function AddressForm({
       <CollapsibleContent className="space-y-4 bg-muted/40 p-4 rounded-xl border mb-4">
         <div className="space-y-3">
           <p className="text-xs font-bold text-primary uppercase tracking-wider">
-            {editingIndex !== null ? "Editando Endereço" : "Novo Endereço"}
+            {editingIndex !== null ? "Editando Contato" : "Novo Contato"}
           </p>
 
-          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Controller
-              name="cep"
+              name="tipo"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel className="text-xs">CEP</FieldLabel>
-                  <Input {...field} placeholder="00000-000" maxLength={8} />
+                  <FieldLabel className="text-xs">Tipo</FieldLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                      <SelectItem value="telefone">Telefone</SelectItem>
+                    </SelectContent>
+                  </Select>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
                 </Field>
               )}
             />
+
             <Controller
-              name="logradouro"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel className="text-xs">Logradouro</FieldLabel>
-                  <Input {...field} placeholder="Rua, Av..." />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              name="numero"
+              name="contato"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel className="text-xs">Número</FieldLabel>
-                  <Input {...field} placeholder="123" />
+                  <Input
+                    {...field}
+                    value={maskPhone(field.value || "")}
+                    onChange={(e) => field.onChange(maskPhone(e.target.value))}
+                    placeholder="(00) 00000-0000"
+                    maxLength={15}
+                  />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
                 </Field>
               )}
             />
+
             <Controller
-              name="bairro"
+              name="principal"
               control={form.control}
               render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel className="text-xs">Bairro</FieldLabel>
-                  <Input {...field} placeholder="Bairro" />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              name="cidade"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel className="text-xs">Cidade</FieldLabel>
-                  <Input {...field} placeholder="Cidade" />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              name="uf"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel className="text-xs">UF</FieldLabel>
-                  <Input {...field} maxLength={2} placeholder="SP" />
+                <Field
+                  data-invalid={fieldState.invalid}
+                  className="flex flex-col justify-center"
+                >
+                  <div className="flex items-center gap-2 mt-4">
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                    <FieldLabel className="text-xs m-0">
+                      Contato Principal
+                    </FieldLabel>
+                  </div>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -220,7 +203,7 @@ export function AddressForm({
 
             <Button
               type="button"
-              onClick={form.handleSubmit(handleSaveAddress)}
+              onClick={form.handleSubmit(handleSaveContact)}
             >
               {editingIndex !== null ? (
                 <>
@@ -239,7 +222,7 @@ export function AddressForm({
       <div className="space-y-2">
         {data.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-4 border border-dashed rounded-lg">
-            Nenhum endereço adicionado ainda.
+            Nenhum contato adicionado ainda.
           </p>
         ) : (
           data.map((item, index) => (
@@ -252,13 +235,13 @@ export function AddressForm({
               }`}
             >
               <div className="space-y-0.5 pr-4">
-                <p className="font-medium text-foreground">
-                  {item.logradouro}, {item.numero}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {item.bairro && `${item.bairro}, `} {item.cidade} - {item.uf}{" "}
-                  | CEP: {item.cep}
-                  {item.complemento && ` (${item.complemento})`}
+                <p className="font-medium text-foreground capitalize">
+                  {item.tipo}: {item.contato}
+                  {item.principal && (
+                    <span className="ml-2 text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-semibold uppercase">
+                      Principal
+                    </span>
+                  )}
                 </p>
               </div>
 

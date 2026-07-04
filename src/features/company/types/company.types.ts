@@ -1,17 +1,19 @@
 export interface Company {
-  id: number;
+  id?: string;
   nome: string;
+  razao: string;
+  email: string;
   cnpj: string;
-  registroMunicipal?: string;
-  registroEstadual?: string;
+  registro_municipal?: string;
+  registro_estadual?: string;
   website?: string;
   status: "ativo" | "inativo";
-  endereco: Endereco[];
-  contato: Contato[];
+  enderecos: Endereco[];
+  contatos: Contato[];
 }
 
 export interface Endereco {
-  id: number;
+  id?: string;
   logradouro: string;
   numero: string;
   complemento?: string;
@@ -23,9 +25,9 @@ export interface Endereco {
 }
 
 export interface Contato {
-  id: number;
+  id?: string;
   tipo: "whatsapp" | "telefone";
-  valor: string;
+  contato: string;
   principal?: boolean;
 }
 
@@ -50,26 +52,15 @@ export interface CompanyResponse {
 }
 
 export interface CompanyFormValues {
+  id?: string;
   nome: string;
+  razao: string;
   email: string;
   cnpj: string;
-  registroEstadual?: string;
-  registroMunicipal?: string;
+  registro_estadual?: string;
+  registro_municipal?: string;
   website?: string;
-  status: "ATIVO" | "INATIVO";
-  endereco: {
-    logradouro: string;
-    numero: string;
-    complemento?: string;
-    bairro: string;
-    cidade: string;
-    uf: string;
-    pais: string;
-    cep: string;
-  }[];
-  contato: {
-    tipo: "whatsapp" | "telefone";
-    valor: string;
-    principal?: boolean;
-  }[];
+  status: "ativo" | "inativo";
+  enderecos: Endereco[];
+  contatos: Contato[];
 }
