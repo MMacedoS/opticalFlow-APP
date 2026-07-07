@@ -1,3 +1,5 @@
+import type { Contato, Endereco } from "@/types/person.type";
+
 export interface Company {
   id?: string;
   nome: string;
@@ -10,25 +12,6 @@ export interface Company {
   status: "ativo" | "inativo";
   enderecos: Endereco[];
   contatos: Contato[];
-}
-
-export interface Endereco {
-  id?: string;
-  logradouro: string;
-  numero: string;
-  complemento?: string;
-  bairro: string;
-  cidade: string;
-  uf: string;
-  pais: string;
-  cep: string;
-}
-
-export interface Contato {
-  id?: string;
-  tipo: "whatsapp" | "telefone";
-  contato: string;
-  principal?: boolean;
 }
 
 export interface CompanyRequest {

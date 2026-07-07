@@ -10,6 +10,7 @@ import {
   PackageSearch,
   ShoppingCart,
   UserKey,
+  Building,
 } from "lucide-react";
 
 export type NavigationItem = {
@@ -38,6 +39,15 @@ export const appNavigationItems: NavigationItem[] = [
     icon: Building2,
     requiredPermission: {
       modulo: "empresa",
+      acao: "listar",
+    },
+  },
+  {
+    label: "Filiais",
+    href: "/filiais",
+    icon: Building,
+    requiredPermission: {
+      modulo: "filial",
       acao: "listar",
     },
   },

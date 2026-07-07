@@ -21,3 +21,25 @@ export function isValidCNPJ(value: string): boolean {
 
   return digit1 === parseInt(cnpj[12]) && digit2 === parseInt(cnpj[13]);
 }
+
+export function isValidCPF(value: string): boolean {
+  const cpf = value.replace(/\D/g, "");
+
+  if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) {
+    return false;
+  }
+
+  const calc = (slice: string, factor: number) => {
+    let sum = 0;
+    for (let i = 0; i < slice.length; i++) {
+      sum += parseInt(slice[i]) * factor--;
+    }
+    const mod = sum % 11;
+    return mod < 2 ? 0 : 11 - mod;
+  };
+
+  const digit1 = calc(cpf.substring(0, 9), 10);
+  const digit2 = calc(cpf.substring(0, 10), 11);
+
+  return digit1 === parseInt(cpf[9]) && digit2 === parseInt(cpf[10]);
+}

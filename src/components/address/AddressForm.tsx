@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -11,56 +11,58 @@ import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { ChevronsUpDown, Plus, Pencil, Trash2, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { Contato } from "../types/company.types";
-import { contactSchema } from "../schema/company.schema";
-import {
-  Select,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { maskPhone } from "@/utils/masks";
+import { useAutoFillAddress } from "../../features/company/hooks/useAutoFillAddress";
+import type { Endereco } from "@/types/person.type";
+import { addressSchema } from "@/schema/address.schema";
 
-type ContactProp = {
-  data?: Contato[];
-  onChange?: (data: Contato[]) => void;
+type ShippingAddressProp = {
+  data?: Endereco[];
+  onChange?: (data: Endereco[]) => void;
   className?: string;
 };
 
-type ContactFormValues = z.infer<typeof contactSchema>;
+type AddressFormValues = z.infer<typeof addressSchema>;
 
 const DEFAULT_FORM_VALUES = {
   id: undefined,
-  tipo: "whatsapp" as const,
-  contato: "",
-  principal: false, // Adicionado para garantir o estado inicial do Switch
+  logradouro: "",
+  numero: "",
+  bairro: "",
+  cidade: "",
+  uf: "",
+  cep: "",
+  pais: "Brasil",
 };
 
-export function ContactForm({ data = [], onChange, className }: ContactProp) {
+export function AddressForm({
+  data = [],
+  onChange,
+  className,
+}: ShippingAddressProp) {
   const [isOpen, setIsOpen] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
-  const form = useForm<ContactFormValues>({
-    resolver: zodResolver(contactSchema),
+  const form = useForm<AddressFormValues>({
+    resolver: zodResolver(addressSchema),
     defaultValues: DEFAULT_FORM_VALUES,
   });
 
-  const handleSaveContact = (values: ContactFormValues) => {
-    const updatedList: Contato[] =
+  const cepValue = useWatch({
+    control: form.control,
+    name: "cep",
+  });
+
+  useAutoFillAddress(cepValue, form.setValue);
+
+  const handleSaveAddress = (values: AddressFormValues) => {
+    const updatedList: Endereco[] =
       editingIndex !== null
         ? data.map((item, index) =>
             index === editingIndex
-              ? ({ ...values, id: item.id } as Contato)
+              ? ({ ...values, id: item.id } as Endereco)
               : item,
           )
-        : [
-            ...data,
-            {
-              ...values,
-            } as Contato,
-          ];
+        : [...data, { ...values } as Endereco];
 
     onChange?.(updatedList);
 
@@ -73,10 +75,10 @@ export function ContactForm({ data = [], onChange, className }: ContactProp) {
 
   const handleEdit = (index: number) => {
     setEditingIndex(index);
-    const contact = data[index];
+    const address = data[index];
     form.reset({
-      ...contact,
-      id: contact.id?.toString(),
+      ...address,
+      id: address.id?.toString(),
     });
     setIsOpen(true);
   };
@@ -101,10 +103,12 @@ export function ContactForm({ data = [], onChange, className }: ContactProp) {
       {/* Cabeçalho */}
       <div className="flex items-center justify-between gap-4 border-b pb-2 mb-4">
         <div>
-          <h4 className="text-sm font-semibold">Contato</h4>
+          <h4 className="text-sm font-semibold">Endereços</h4>
           <p className="text-xs text-muted-foreground">
             {data.length}{" "}
-            {data.length === 1 ? "contato cadastrado" : "contatos cadastrados"}
+            {data.length === 1
+              ? "endereço cadastrado"
+              : "endereços cadastrados"}
           </p>
         </div>
         <CollapsibleTrigger
@@ -119,69 +123,82 @@ export function ContactForm({ data = [], onChange, className }: ContactProp) {
       <CollapsibleContent className="space-y-4 bg-muted/40 p-4 rounded-xl border mb-4">
         <div className="space-y-3">
           <p className="text-xs font-bold text-primary uppercase tracking-wider">
-            {editingIndex !== null ? "Editando Contato" : "Novo Contato"}
+            {editingIndex !== null ? "Editando Endereço" : "Novo Endereço"}
           </p>
 
-          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
             <Controller
-              name="tipo"
+              name="cep"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel className="text-xs">Tipo</FieldLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                      <SelectItem value="telefone">Telefone</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <FieldLabel className="text-xs">CEP</FieldLabel>
+                  <Input {...field} placeholder="00000-000" maxLength={8} />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
                 </Field>
               )}
             />
-
             <Controller
-              name="contato"
+              name="logradouro"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel className="text-xs">Logradouro</FieldLabel>
+                  <Input {...field} placeholder="Rua, Av..." />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <Controller
+              name="numero"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel className="text-xs">Número</FieldLabel>
-                  <Input
-                    {...field}
-                    value={maskPhone(field.value || "")}
-                    onChange={(e) => field.onChange(maskPhone(e.target.value))}
-                    placeholder="(00) 00000-0000"
-                    maxLength={15}
-                  />
+                  <Input {...field} placeholder="123" />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
                 </Field>
               )}
             />
-
             <Controller
-              name="principal"
+              name="bairro"
               control={form.control}
               render={({ field, fieldState }) => (
-                <Field
-                  data-invalid={fieldState.invalid}
-                  className="flex flex-col justify-center"
-                >
-                  <div className="flex items-center gap-2 mt-4">
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                    <FieldLabel className="text-xs m-0">
-                      Contato Principal
-                    </FieldLabel>
-                  </div>
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel className="text-xs">Bairro</FieldLabel>
+                  <Input {...field} placeholder="Bairro" />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <Controller
+              name="cidade"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel className="text-xs">Cidade</FieldLabel>
+                  <Input {...field} placeholder="Cidade" />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <Controller
+              name="uf"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel className="text-xs">UF</FieldLabel>
+                  <Input {...field} maxLength={2} placeholder="SP" />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -203,7 +220,7 @@ export function ContactForm({ data = [], onChange, className }: ContactProp) {
 
             <Button
               type="button"
-              onClick={form.handleSubmit(handleSaveContact)}
+              onClick={form.handleSubmit(handleSaveAddress)}
             >
               {editingIndex !== null ? (
                 <>
@@ -222,7 +239,7 @@ export function ContactForm({ data = [], onChange, className }: ContactProp) {
       <div className="space-y-2">
         {data.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-4 border border-dashed rounded-lg">
-            Nenhum contato adicionado ainda.
+            Nenhum endereço adicionado ainda.
           </p>
         ) : (
           data.map((item, index) => (
@@ -235,13 +252,13 @@ export function ContactForm({ data = [], onChange, className }: ContactProp) {
               }`}
             >
               <div className="space-y-0.5 pr-4">
-                <p className="font-medium text-foreground capitalize">
-                  {item.tipo}: {item.contato}
-                  {item.principal && (
-                    <span className="ml-2 text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-semibold uppercase">
-                      Principal
-                    </span>
-                  )}
+                <p className="font-medium text-foreground">
+                  {item.logradouro}, {item.numero}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {item.bairro && `${item.bairro}, `} {item.cidade} - {item.uf}{" "}
+                  | CEP: {item.cep}
+                  {item.complemento && ` (${item.complemento})`}
                 </p>
               </div>
 

@@ -1,31 +1,36 @@
-import { Controller } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { Building2, Pencil } from "lucide-react";
-import { useCompanyForm } from "../hooks/useCompanyForm";
-import {
-  FieldGroup,
-  Field,
-  FieldLabel,
-  FieldError,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { maskCNPJ } from "@/utils/masks";
-import { AddressForm } from "../../../components/address/AddressForm";
-import { Separator } from "@/components/ui/separator";
-import { ContactForm } from "../../../components/ContactForm";
-import type { Company } from "../types/company.types";
 import { DialogForm } from "@/components/dialog/DialogForm";
+import { useBranchForm } from "../hooks/useBranchForm";
+import type { BranchFormProps } from "../types/branch.type";
+import { Building, CalendarIcon, Pencil } from "lucide-react";
 import { CardPage } from "@/components/cards/CardPage";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import { Controller } from "react-hook-form";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
+import { ContactForm } from "@/components/ContactForm";
+import { AddressForm } from "@/components/address/AddressForm";
+import { maskCNPJ, maskCPF } from "@/utils/masks";
 
-type CompanyFormProps = {
-  initialData?: Company;
-};
-
-export function CompanyForm({ initialData }: CompanyFormProps) {
+export function BranchForm({ initialValues }: BranchFormProps) {
   const { form, onSubmit, isPending, errorMessage } =
-    useCompanyForm(initialData);
+    useBranchForm(initialValues);
 
-  const isEditing = !!initialData;
+  const isEditing = !!initialValues;
 
   const enderecos = form.watch("enderecos") || [];
   const contatos = form.watch("contatos") || [];
@@ -34,20 +39,16 @@ export function CompanyForm({ initialData }: CompanyFormProps) {
     <>
       <DialogForm
         title={isEditing ? "Editar" : "Cadastrar"}
-        icon={isEditing ? Pencil : Building2}
+        icon={isEditing ? Pencil : Building}
         variant={isEditing ? "outline" : "default"}
         children={
           <>
             <CardPage
-              title={isEditing ? "Editar Empresa" : "Cadastrar Empresa"}
-              description={
-                isEditing
-                  ? "Preencha os campos abaixo para editar a empresa."
-                  : "Preencha os campos abaixo para cadastrar uma nova empresa."
-              }
+              title={isEditing ? "Editar Filial" : "Cadastrar Empresa"}
+              description={"Preencha os campos abaixo"}
               children={
                 <>
-                  <form id="form-company" onSubmit={onSubmit} noValidate>
+                  <form id="form-branch" onSubmit={onSubmit} noValidate>
                     <FieldGroup>
                       <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                         <Controller
@@ -55,85 +56,31 @@ export function CompanyForm({ initialData }: CompanyFormProps) {
                           control={form.control}
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                              <FieldLabel htmlFor="form-company-nome">
-                                Nome da Empresa
+                              <FieldLabel htmlFor="form-branch-nome">
+                                Empresa
                               </FieldLabel>
-                              <Input
-                                {...field}
-                                id="form-company-nome"
-                                aria-invalid={fieldState.invalid}
-                                placeholder="nome da empresa"
-                                autoComplete="off"
-                              />
+                              <Input {...field} placeholder="Nome da Filial" />
                               {fieldState.invalid && (
                                 <FieldError errors={[fieldState.error]} />
                               )}
                             </Field>
                           )}
                         />
-
-                        <Controller
-                          name="razao"
-                          control={form.control}
-                          render={({ field, fieldState }) => (
-                            <Field data-invalid={fieldState.invalid}>
-                              <FieldLabel htmlFor="form-company-razao">
-                                Razão Social
-                              </FieldLabel>
-                              <Input
-                                {...field}
-                                id="form-company-razao"
-                                aria-invalid={fieldState.invalid}
-                                placeholder="Razão social da empresa"
-                                autoComplete="off"
-                              />
-                              {fieldState.invalid && (
-                                <FieldError errors={[fieldState.error]} />
-                              )}
-                            </Field>
-                          )}
-                        />
-                        <Controller
-                          name="email"
-                          control={form.control}
-                          render={({ field, fieldState }) => (
-                            <Field data-invalid={fieldState.invalid}>
-                              <FieldLabel htmlFor="form-company-email">
-                                E-mail
-                              </FieldLabel>
-                              <Input
-                                {...field}
-                                id="form-company-email"
-                                aria-invalid={fieldState.invalid}
-                                placeholder="Email da empresa"
-                                autoComplete="off"
-                              />
-                              {fieldState.invalid && (
-                                <FieldError errors={[fieldState.error]} />
-                              )}
-                            </Field>
-                          )}
-                        />
-                      </div>
-                      <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
                         <Controller
                           name="cnpj"
                           control={form.control}
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                              <FieldLabel htmlFor="form-company-cnpj">
+                              <FieldLabel htmlFor="form-branch-cnpj">
                                 CNPJ
                               </FieldLabel>
                               <Input
                                 {...field}
+                                placeholder="CNPJ"
                                 value={maskCNPJ(field.value || "")}
                                 onChange={(e) =>
                                   field.onChange(maskCNPJ(e.target.value))
                                 }
-                                id="form-company-cnpj"
-                                aria-invalid={fieldState.invalid}
-                                placeholder="00.000.0000/0001-00"
-                                autoComplete="off"
                                 maxLength={18}
                               />
                               {fieldState.invalid && (
@@ -143,19 +90,16 @@ export function CompanyForm({ initialData }: CompanyFormProps) {
                           )}
                         />
                         <Controller
-                          name="registro_estadual"
+                          name="pessoa.nome"
                           control={form.control}
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                              <FieldLabel htmlFor="form-company-rg-estadual">
-                                Registro Estadual
+                              <FieldLabel htmlFor="form-branch-responsavel">
+                                Nome completo
                               </FieldLabel>
                               <Input
                                 {...field}
-                                id="form-company-rg-estadual"
-                                aria-invalid={fieldState.invalid}
-                                placeholder="xxxxxxxxxxxx-xx"
-                                autoComplete="off"
+                                placeholder="Nome completo do Responsável pela empresa"
                               />
                               {fieldState.invalid && (
                                 <FieldError errors={[fieldState.error]} />
@@ -164,19 +108,21 @@ export function CompanyForm({ initialData }: CompanyFormProps) {
                           )}
                         />
                         <Controller
-                          name="registro_municipal"
+                          name="pessoa.cpf"
                           control={form.control}
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                              <FieldLabel htmlFor="form-company-rg-municipal">
-                                Registro Municipal
+                              <FieldLabel htmlFor="form-branch-cpf">
+                                CPF do Responsável
                               </FieldLabel>
                               <Input
                                 {...field}
-                                id="form-company-rg-municipal"
-                                aria-invalid={fieldState.invalid}
-                                placeholder="xxxxxxxxxxx-xx"
-                                autoComplete="off"
+                                placeholder="CPF"
+                                value={maskCPF(field.value || "")}
+                                onChange={(e) =>
+                                  field.onChange(maskCPF(e.target.value))
+                                }
+                                maxLength={14}
                               />
                               {fieldState.invalid && (
                                 <FieldError errors={[fieldState.error]} />
@@ -185,19 +131,66 @@ export function CompanyForm({ initialData }: CompanyFormProps) {
                           )}
                         />
                         <Controller
-                          name="website"
+                          name="pessoa.data_nascimento"
                           control={form.control}
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                              <FieldLabel htmlFor="form-company-rg-website">
-                                website
+                              <FieldLabel htmlFor="form-branch-data_nascimento">
+                                Data de Nascimento
+                              </FieldLabel>
+                              <Popover>
+                                <PopoverTrigger>
+                                  <Button
+                                    variant="outline"
+                                    className={cn(
+                                      "w-full justify-start text-left font-normal",
+                                      !field.value && "text-muted-foreground",
+                                      fieldState.invalid && "border-red-500", // Feedback visual de erro
+                                    )}
+                                  >
+                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                    {field.value ? (
+                                      format(field.value, "PPP", {
+                                        locale: ptBR,
+                                      })
+                                    ) : (
+                                      <span>Selecione uma data</span>
+                                    )}
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent
+                                  className="w-auto p-0"
+                                  align="start"
+                                >
+                                  <Calendar
+                                    mode="single"
+                                    selected={field.value}
+                                    onSelect={field.onChange}
+                                    disabled={(date) =>
+                                      date > new Date() ||
+                                      date < new Date("1900-01-01")
+                                    }
+                                  />
+                                </PopoverContent>
+                              </Popover>
+                              {fieldState.invalid && (
+                                <FieldError errors={[fieldState.error]} />
+                              )}
+                            </Field>
+                          )}
+                        />
+                        <Controller
+                          name="pessoa.email"
+                          control={form.control}
+                          render={({ field, fieldState }) => (
+                            <Field data-invalid={fieldState.invalid}>
+                              <FieldLabel htmlFor="form-branch-email">
+                                E-mail do Responsável
                               </FieldLabel>
                               <Input
                                 {...field}
-                                id="form-company-rg-website"
-                                aria-invalid={fieldState.invalid}
-                                placeholder="https://www.exemplo.com"
-                                autoComplete="off"
+                                placeholder="E-mail"
+                                type="email"
                               />
                               {fieldState.invalid && (
                                 <FieldError errors={[fieldState.error]} />
@@ -207,14 +200,11 @@ export function CompanyForm({ initialData }: CompanyFormProps) {
                         />
                       </div>
                     </FieldGroup>
-
                     <Separator className="my-4" />
-
                     <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2">
                       <AddressForm
                         className="mt-4"
                         data={enderecos}
-                        // Atualiza o React Hook Form quando a lista mudar
                         onChange={(data) =>
                           form.setValue("enderecos", data, {
                             shouldValidate: true,
@@ -224,7 +214,6 @@ export function CompanyForm({ initialData }: CompanyFormProps) {
                       <ContactForm
                         className="mt-4"
                         data={contatos}
-                        // Atualiza o React Hook Form quando a lista mudar
                         onChange={(data) =>
                           form.setValue("contatos", data, {
                             shouldValidate: true,
@@ -242,7 +231,7 @@ export function CompanyForm({ initialData }: CompanyFormProps) {
                     variant="ghost"
                     size="sm"
                     type="reset"
-                    form="form-company"
+                    form="form-branch"
                     className="mr-2 hover:bg-destructive/10 hover:text-destructive"
                     disabled={isPending}
                     onClick={() => form.reset()}
@@ -251,7 +240,7 @@ export function CompanyForm({ initialData }: CompanyFormProps) {
                   </Button>
                   <Button
                     type="submit"
-                    form="form-company"
+                    form="form-branch"
                     variant="outline"
                     size="sm"
                     disabled={isPending}
