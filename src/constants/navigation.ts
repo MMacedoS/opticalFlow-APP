@@ -11,6 +11,7 @@ import {
   ShoppingCart,
   UserKey,
   Building,
+  HeartHandshake,
 } from "lucide-react";
 
 export type NavigationItem = {
@@ -66,6 +67,15 @@ export const appNavigationItems: NavigationItem[] = [
     icon: Users,
     requiredPermission: {
       modulo: "pessoa",
+      acao: "listar",
+    },
+  },
+  {
+    label: "Convênios",
+    href: "/convenios",
+    icon: HeartHandshake,
+    requiredPermission: {
+      modulo: "convenio",
       acao: "listar",
     },
   },

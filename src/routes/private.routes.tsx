@@ -6,6 +6,8 @@ import { DashboardPage } from "@/features/dashboard";
 import { CompanyPage } from "@/features/company";
 import { UserPage } from "@/features/auth/user";
 import { BranchPage } from "@/features/branch";
+import { CustomerPage } from "@/features/customer";
+import { AgreementPage } from "@/features/agreement";
 
 export const privateRoutes: RouteObject[] = [
   {
@@ -25,6 +27,14 @@ export const privateRoutes: RouteObject[] = [
           {
             path: "/filiais/*",
             element: <BranchPage />,
+          },
+          {
+            path: "/convenios/*",
+            element: <AgreementPage />,
+          },
+          {
+            path: "/clientes/*",
+            element: <CustomerPage />,
           },
           {
             path: "/usuarios/*",

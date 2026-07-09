@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { maskCNPJ } from "@/utils/masks";
 import { AddressForm } from "../../../components/address/AddressForm";
 import { Separator } from "@/components/ui/separator";
-import { ContactForm } from "../../../components/ContactForm";
+import { ContactForm } from "../../../components/contacts/ContactForm";
 import type { Company } from "../types/company.types";
 import { DialogForm } from "@/components/dialog/DialogForm";
 import { CardPage } from "@/components/cards/CardPage";
