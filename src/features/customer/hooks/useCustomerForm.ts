@@ -22,8 +22,6 @@ export function useCustomerForm(initialValues?: CustomerFormValues) {
         email: "",
         status: "ativo",
       },
-      endereco: [],
-      contato: [],
     },
     values: initialValues,
   });

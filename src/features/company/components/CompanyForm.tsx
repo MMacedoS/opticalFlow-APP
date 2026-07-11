@@ -16,6 +16,7 @@ import { ContactForm } from "../../../components/contacts/ContactForm";
 import type { Company } from "../types/company.types";
 import { DialogForm } from "@/components/dialog/DialogForm";
 import { CardPage } from "@/components/cards/CardPage";
+import { DialogClose } from "@/components/ui/dialog";
 
 type CompanyFormProps = {
   initialData?: Company;
@@ -238,17 +239,21 @@ export function CompanyForm({ initialData }: CompanyFormProps) {
               action={<></>}
               footer={
                 <>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    type="reset"
-                    form="form-company"
-                    className="mr-2 hover:bg-destructive/10 hover:text-destructive"
-                    disabled={isPending}
-                    onClick={() => form.reset()}
-                  >
-                    Limpar
-                  </Button>
+                  <DialogClose
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        type="reset"
+                        form="form-company"
+                        className="mr-2 hover:bg-destructive/10 hover:text-destructive"
+                        disabled={isPending}
+                        onClick={() => form.reset()}
+                      >
+                        Fechar
+                      </Button>
+                    }
+                  />
                   <Button
                     type="submit"
                     form="form-company"

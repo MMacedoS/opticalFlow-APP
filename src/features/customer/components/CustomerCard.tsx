@@ -96,12 +96,12 @@ export function CustomerCard(data: Customer) {
             <p>Responsável: {data.pessoa?.nome}</p>
             <p className="text-xs text-muted-foreground">
               Telefone:{" "}
-              {data.contato && data.contato.length > 0
-                ? data.contato[0].contato || "N/A"
+              {data.pessoa.contatos && data.pessoa.contatos.length > 0
+                ? data.pessoa.contatos[0].contato || "N/A"
                 : "N/A"}
-              {data.contato &&
-              data.contato.length > 0 &&
-              data.contato[0].tipo ? (
+              {data.pessoa.contatos &&
+              data.pessoa.contatos.length > 0 &&
+              data.pessoa.contatos[0].tipo ? (
                 <WhatsappButton
                   numero="${data.contatos[0].contato}"
                   message="Olá, gostaria de entrar em contato com Cliente ${data.nome}."

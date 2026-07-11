@@ -4,8 +4,8 @@ export interface Customer {
   id: string;
   status: "ativo" | "inativo";
   pessoa: Pessoa;
-  contato?: Contato[];
-  endereco?: Endereco[];
+  contatos?: Contato[];
+  enderecos?: Endereco[];
 }
 
 export interface CustomerRequest {

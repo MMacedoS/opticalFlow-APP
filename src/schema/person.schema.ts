@@ -1,5 +1,7 @@
 import { isValidCPF } from "@/utils/validators";
 import z from "zod/v4";
+import { addressSchema } from "./address.schema";
+import { contactSchema } from "./contact.schema";
 
 export const personSchema = z.object({
   id: z.string().optional(),
@@ -22,6 +24,14 @@ export const personSchema = z.object({
     ["ativo", "inativo"],
     "O status deve ser 'ativo' ou 'inativo'",
   ),
+  enderecos: z
+    .array(addressSchema)
+    .min(1, "É necessário pelo menos um endereço")
+    .optional(),
+  contatos: z
+    .array(contactSchema)
+    .min(1, "É necessário pelo menos um contato")
+    .optional(),
 });
 
 export type Person = z.infer<typeof personSchema>;

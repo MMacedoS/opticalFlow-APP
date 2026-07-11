@@ -25,6 +25,7 @@ import { Separator } from "@/components/ui/separator";
 import { ContactForm } from "@/components/contacts/ContactForm";
 import { AddressForm } from "@/components/address/AddressForm";
 import { maskCNPJ, maskCPF } from "@/utils/masks";
+import { DialogClose } from "@/components/ui/dialog";
 
 export function BranchForm({ initialValues }: BranchFormProps) {
   const { form, onSubmit, isPending, errorMessage } =
@@ -227,17 +228,21 @@ export function BranchForm({ initialValues }: BranchFormProps) {
               action={<></>}
               footer={
                 <>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    type="reset"
-                    form="form-branch"
-                    className="mr-2 hover:bg-destructive/10 hover:text-destructive"
-                    disabled={isPending}
-                    onClick={() => form.reset()}
-                  >
-                    Limpar
-                  </Button>
+                  <DialogClose
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        type="reset"
+                        form="form-branch"
+                        className="mr-2 hover:bg-destructive/10 hover:text-destructive"
+                        disabled={isPending}
+                        onClick={() => form.reset()}
+                      >
+                        Fechar
+                      </Button>
+                    }
+                  />
                   <Button
                     type="submit"
                     form="form-branch"

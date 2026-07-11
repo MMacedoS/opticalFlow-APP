@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DialogClose } from "@/components/ui/dialog";
 
 export function AgreementForm({ initialValues }: AgreementProps) {
   const { form, onSubmit, isPending, errorMessage } =
@@ -112,17 +113,20 @@ export function AgreementForm({ initialValues }: AgreementProps) {
               action={<></>}
               footer={
                 <>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    type="reset"
-                    form="form-agreement"
-                    className="mr-2 hover:bg-destructive/10 hover:text-destructive"
-                    disabled={isPending}
-                    onClick={() => form.reset()}
-                  >
-                    Limpar
-                  </Button>
+                  <DialogClose
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        type="button"
+                        className="mr-2 hover:bg-destructive/10 hover:text-destructive"
+                        disabled={isPending}
+                        onClick={() => form.reset()}
+                      >
+                        Fechar
+                      </Button>
+                    }
+                  />
                   <Button
                     type="submit"
                     form="form-agreement"

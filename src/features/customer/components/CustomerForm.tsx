@@ -25,6 +25,8 @@ import { AddressForm } from "@/components/address/AddressForm";
 import { maskCPF } from "@/utils/masks";
 import type { CustomerProps } from "../types/customer.type";
 import { useCustomerForm } from "../hooks/useCustomerForm";
+import { useAgreementsList } from "@/features/agreement/hooks/useAgreementsList";
+import { DialogClose } from "@/components/ui/dialog";
 
 export function CustomerForm({ initialValues }: CustomerProps) {
   const { form, onSubmit, isPending, errorMessage } =
@@ -32,8 +34,10 @@ export function CustomerForm({ initialValues }: CustomerProps) {
 
   const isEditing = !!initialValues;
 
-  const enderecos = form.watch("endereco") || [];
-  const contatos = form.watch("contato") || [];
+  const enderecos = form.watch("pessoa.enderecos") || [];
+  const contatos = form.watch("pessoa.contatos") || [];
+
+  const agreementList = useAgreementsList({ limit: 1000, search: "" });
 
   return (
     <>
@@ -157,6 +161,63 @@ export function CustomerForm({ initialValues }: CustomerProps) {
                             </Field>
                           )}
                         />
+                        <Controller
+                          name="convenioId"
+                          control={form.control}
+                          render={({ field, fieldState }) => (
+                            <Field data-invalid={fieldState.invalid}>
+                              <FieldLabel htmlFor="form-customer-convenioId">
+                                Convênio
+                              </FieldLabel>
+                              <select
+                                {...field}
+                                className={cn(
+                                  "border rounded-lg p-2",
+                                  fieldState.invalid && "border-red-500", // Feedback visual de erro
+                                )}
+                              >
+                                <option value="">Selecione um convênio</option>
+                                {agreementList.data?.data.agreements.map(
+                                  (agreement) => (
+                                    <option
+                                      key={agreement.id}
+                                      value={agreement.id}
+                                    >
+                                      {agreement.nome}
+                                    </option>
+                                  ),
+                                )}
+                              </select>
+                              {fieldState.invalid && (
+                                <FieldError errors={[fieldState.error]} />
+                              )}
+                            </Field>
+                          )}
+                        />
+                        <Controller
+                          name="pessoa.status"
+                          control={form.control}
+                          render={({ field, fieldState }) => (
+                            <Field data-invalid={fieldState.invalid}>
+                              <FieldLabel htmlFor="form-customer-status">
+                                Status
+                              </FieldLabel>
+                              <select
+                                {...field}
+                                className={cn(
+                                  "border rounded-lg p-2",
+                                  fieldState.invalid && "border-red-500", // Feedback visual de erro
+                                )}
+                              >
+                                <option value="ativo">Ativo</option>
+                                <option value="inativo">Inativo</option>
+                              </select>
+                              {fieldState.invalid && (
+                                <FieldError errors={[fieldState.error]} />
+                              )}
+                            </Field>
+                          )}
+                        />
                       </div>
                     </FieldGroup>
                     <Separator className="my-4" />
@@ -165,7 +226,7 @@ export function CustomerForm({ initialValues }: CustomerProps) {
                         className="mt-4"
                         data={enderecos}
                         onChange={(data) =>
-                          form.setValue("endereco", data, {
+                          form.setValue("pessoa.enderecos", data, {
                             shouldValidate: true,
                           })
                         }
@@ -174,7 +235,7 @@ export function CustomerForm({ initialValues }: CustomerProps) {
                         className="mt-4"
                         data={contatos}
                         onChange={(data) =>
-                          form.setValue("contato", data, {
+                          form.setValue("pessoa.contatos", data, {
                             shouldValidate: true,
                           })
                         }
@@ -186,17 +247,21 @@ export function CustomerForm({ initialValues }: CustomerProps) {
               action={<></>}
               footer={
                 <>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    type="reset"
-                    form="form-customer"
-                    className="mr-2 hover:bg-destructive/10 hover:text-destructive"
-                    disabled={isPending}
-                    onClick={() => form.reset()}
-                  >
-                    Limpar
-                  </Button>
+                  <DialogClose
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        type="reset"
+                        form="form-customer"
+                        className="mr-2 hover:bg-destructive/10 hover:text-destructive"
+                        disabled={isPending}
+                        onClick={() => form.reset()}
+                      >
+                        Fechar
+                      </Button>
+                    }
+                  />
                   <Button
                     type="submit"
                     form="form-customer"
