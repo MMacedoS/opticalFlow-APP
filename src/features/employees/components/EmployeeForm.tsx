@@ -1,6 +1,4 @@
 import { DialogForm } from "@/components/dialog/DialogForm";
-import { useBranchForm } from "../hooks/useBranchForm";
-import type { BranchFormProps } from "../types/branch.type";
 import { Building, CalendarIcon, Pencil } from "lucide-react";
 import { CardPage } from "@/components/cards/CardPage";
 import {
@@ -24,17 +22,19 @@ import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { ContactForm } from "@/components/contacts/ContactForm";
 import { AddressForm } from "@/components/address/AddressForm";
-import { maskCNPJ, maskCPF } from "@/utils/masks";
+import { maskCPF } from "@/utils/masks";
 import { DialogClose } from "@/components/ui/dialog";
+import { useEmployeeForm } from "../hooks/useEmployeeForm";
+import type { EmployeeProps } from "../types/employee.interface";
 
-export function BranchForm({ initialValues }: BranchFormProps) {
+export function EmployeeForm({ initialValues }: EmployeeProps) {
   const { form, onSubmit, isPending, errorMessage } =
-    useBranchForm(initialValues);
+    useEmployeeForm(initialValues);
 
   const isEditing = !!initialValues;
 
-  const enderecos = form.watch("enderecos") || [];
-  const contatos = form.watch("contatos") || [];
+  const enderecos = form.watch("pessoa.enderecos") || [];
+  const contatos = form.watch("pessoa.contatos") || [];
 
   return (
     <>
@@ -45,63 +45,22 @@ export function BranchForm({ initialValues }: BranchFormProps) {
         children={
           <>
             <CardPage
-              title={isEditing ? "Editar Filial" : "Cadastrar Empresa"}
+              title={isEditing ? "Editar Funcionario" : "Cadastrar Funcionario"}
               description={"Preencha os campos abaixo"}
               children={
                 <>
-                  <form id="form-branch" onSubmit={onSubmit} noValidate>
+                  <form id="form-employee" onSubmit={onSubmit} noValidate>
                     <FieldGroup>
                       <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                        <Controller
-                          name="nome"
-                          control={form.control}
-                          render={({ field, fieldState }) => (
-                            <Field data-invalid={fieldState.invalid}>
-                              <FieldLabel htmlFor="form-branch-nome">
-                                Empresa
-                              </FieldLabel>
-                              <Input {...field} placeholder="Nome da Filial" />
-                              {fieldState.invalid && (
-                                <FieldError errors={[fieldState.error]} />
-                              )}
-                            </Field>
-                          )}
-                        />
-                        <Controller
-                          name="cnpj"
-                          control={form.control}
-                          render={({ field, fieldState }) => (
-                            <Field data-invalid={fieldState.invalid}>
-                              <FieldLabel htmlFor="form-branch-cnpj">
-                                CNPJ
-                              </FieldLabel>
-                              <Input
-                                {...field}
-                                placeholder="CNPJ"
-                                value={maskCNPJ(field.value || "")}
-                                onChange={(e) =>
-                                  field.onChange(maskCNPJ(e.target.value))
-                                }
-                                maxLength={18}
-                              />
-                              {fieldState.invalid && (
-                                <FieldError errors={[fieldState.error]} />
-                              )}
-                            </Field>
-                          )}
-                        />
                         <Controller
                           name="pessoa.nome"
                           control={form.control}
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                              <FieldLabel htmlFor="form-branch-responsavel">
+                              <FieldLabel htmlFor="form-employee-responsavel">
                                 Nome completo
                               </FieldLabel>
-                              <Input
-                                {...field}
-                                placeholder="Nome completo do Responsável pela empresa"
-                              />
+                              <Input {...field} placeholder="Nome completo" />
                               {fieldState.invalid && (
                                 <FieldError errors={[fieldState.error]} />
                               )}
@@ -113,7 +72,7 @@ export function BranchForm({ initialValues }: BranchFormProps) {
                           control={form.control}
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                              <FieldLabel htmlFor="form-branch-cpf">
+                              <FieldLabel htmlFor="form-employee-cpf">
                                 CPF do Responsável
                               </FieldLabel>
                               <Input
@@ -136,31 +95,29 @@ export function BranchForm({ initialValues }: BranchFormProps) {
                           control={form.control}
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                              <FieldLabel htmlFor="form-branch-data_nascimento">
+                              <FieldLabel htmlFor="form-employee-data_nascimento">
                                 Data de Nascimento
                               </FieldLabel>
                               <Popover>
-                                <PopoverTrigger
-                                  render={
-                                    <Button
-                                      variant="outline"
-                                      className={cn(
-                                        "w-full justify-start text-left font-normal",
-                                        !field.value && "text-muted-foreground",
-                                        fieldState.invalid && "border-red-500", // Feedback visual de erro
-                                      )}
-                                    >
-                                      <CalendarIcon className="mr-2 h-4 w-4" />
-                                      {field.value ? (
-                                        format(field.value, "PPP", {
-                                          locale: ptBR,
-                                        })
-                                      ) : (
-                                        <span>Selecione uma data</span>
-                                      )}
-                                    </Button>
-                                  }
-                                />
+                                <PopoverTrigger>
+                                  <Button
+                                    variant="outline"
+                                    className={cn(
+                                      "w-full justify-start text-left font-normal",
+                                      !field.value && "text-muted-foreground",
+                                      fieldState.invalid && "border-red-500", // Feedback visual de erro
+                                    )}
+                                  >
+                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                    {field.value ? (
+                                      format(field.value, "PPP", {
+                                        locale: ptBR,
+                                      })
+                                    ) : (
+                                      <span>Selecione uma data</span>
+                                    )}
+                                  </Button>
+                                </PopoverTrigger>
                                 <PopoverContent
                                   className="w-auto p-0"
                                   align="start"
@@ -187,7 +144,7 @@ export function BranchForm({ initialValues }: BranchFormProps) {
                           control={form.control}
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                              <FieldLabel htmlFor="form-branch-email">
+                              <FieldLabel htmlFor="form-employee-email">
                                 E-mail do Responsável
                               </FieldLabel>
                               <Input
@@ -195,6 +152,57 @@ export function BranchForm({ initialValues }: BranchFormProps) {
                                 placeholder="E-mail"
                                 type="email"
                               />
+                              {fieldState.invalid && (
+                                <FieldError errors={[fieldState.error]} />
+                              )}
+                            </Field>
+                          )}
+                        />
+                        <Controller
+                          name="cargo"
+                          control={form.control}
+                          render={({ field, fieldState }) => (
+                            <Field data-invalid={fieldState.invalid}>
+                              <FieldLabel htmlFor="form-employee-cargo">
+                                Cargo
+                              </FieldLabel>
+                              <select
+                                {...field}
+                                className={cn(
+                                  "border rounded-lg p-2",
+                                  fieldState.invalid && "border-red-500",
+                                )}
+                              >
+                                <option value="gerente">Gerente</option>
+                                <option value="funcionario">Funcionario</option>
+                                <option value="recepcionista">
+                                  Recepcionista
+                                </option>
+                              </select>
+                              {fieldState.invalid && (
+                                <FieldError errors={[fieldState.error]} />
+                              )}
+                            </Field>
+                          )}
+                        />
+                        <Controller
+                          name="pessoa.status"
+                          control={form.control}
+                          render={({ field, fieldState }) => (
+                            <Field data-invalid={fieldState.invalid}>
+                              <FieldLabel htmlFor="form-employee-status">
+                                Status
+                              </FieldLabel>
+                              <select
+                                {...field}
+                                className={cn(
+                                  "border rounded-lg p-2",
+                                  fieldState.invalid && "border-red-500", // Feedback visual de erro
+                                )}
+                              >
+                                <option value="ativo">Ativo</option>
+                                <option value="inativo">Inativo</option>
+                              </select>
                               {fieldState.invalid && (
                                 <FieldError errors={[fieldState.error]} />
                               )}
@@ -209,7 +217,7 @@ export function BranchForm({ initialValues }: BranchFormProps) {
                         className="mt-4"
                         data={enderecos}
                         onChange={(data) =>
-                          form.setValue("enderecos", data, {
+                          form.setValue("pessoa.enderecos", data, {
                             shouldValidate: true,
                           })
                         }
@@ -218,7 +226,7 @@ export function BranchForm({ initialValues }: BranchFormProps) {
                         className="mt-4"
                         data={contatos}
                         onChange={(data) =>
-                          form.setValue("contatos", data, {
+                          form.setValue("pessoa.contatos", data, {
                             shouldValidate: true,
                           })
                         }
@@ -236,7 +244,7 @@ export function BranchForm({ initialValues }: BranchFormProps) {
                         variant="ghost"
                         size="sm"
                         type="reset"
-                        form="form-branch"
+                        form="form-employee"
                         className="mr-2 hover:bg-destructive/10 hover:text-destructive"
                         disabled={isPending}
                         onClick={() => form.reset()}
@@ -247,11 +255,11 @@ export function BranchForm({ initialValues }: BranchFormProps) {
                   />
                   <Button
                     type="submit"
-                    form="form-branch"
+                    form="form-employee"
                     variant="outline"
                     size="sm"
-                    className="bg-primary text-white hover:bg-primary/90 hover:text-primary-foreground"
-                    disabled={!form.formState.isValid || isPending}
+                    disabled={isPending}
+                    className="bg-primary/80 text-white hover:bg-primary/90 hover:text-primary-foreground"
                   >
                     {isPending ? "Salvando..." : "Salvar"}
                   </Button>

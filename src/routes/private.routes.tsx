@@ -8,6 +8,7 @@ import { UserPage } from "@/features/auth/user";
 import { BranchPage } from "@/features/branch";
 import { CustomerPage } from "@/features/customer";
 import { AgreementPage } from "@/features/agreement";
+import { EmployeePage } from "@/features/employees/pages/EmployeePage";
 
 export const privateRoutes: RouteObject[] = [
   {
@@ -39,6 +40,10 @@ export const privateRoutes: RouteObject[] = [
           {
             path: "/usuarios/*",
             element: <UserPage />,
+          },
+          {
+            path: "/funcionarios/*",
+            element: <EmployeePage />,
           },
         ],
       },

@@ -20,10 +20,8 @@ export const personSchema = z.object({
 
   email: z.email("O e-mail deve ser válido"),
 
-  status: z.enum(
-    ["ativo", "inativo"],
-    "O status deve ser 'ativo' ou 'inativo'",
-  ),
+  status: z.enum(["ativo", "inativo"]).optional(),
+
   enderecos: z
     .array(addressSchema)
     .min(1, "É necessário pelo menos um endereço")

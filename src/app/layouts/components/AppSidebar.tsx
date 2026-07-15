@@ -60,10 +60,10 @@ export function AppSidebar() {
           </div>
           <div className="min-w-0 group-data-[collapsible=icon]:hidden">
             <p className="truncate text-sm font-semibold text-sidebar-foreground">
-              Acme Inc
+              Optica Flow
             </p>
             <p className="truncate text-xs text-sidebar-foreground/70">
-              Enterprise
+              Gerenciamento
             </p>
           </div>
         </button>
@@ -129,14 +129,14 @@ export function AppSidebar() {
             }
           >
             <div className="flex size-8 items-center justify-center rounded-full bg-[linear-gradient(135deg,oklch(0.74_0.23_345),oklch(0.71_0.18_290))] text-[11px] font-semibold text-white">
-              SH
+              {session?.usuario?.username?.charAt(0).toUpperCase() ?? "?"}
             </div>
             <div className="min-w-0 group-data-[collapsible=icon]:hidden">
               <p className="truncate text-sm font-medium text-sidebar-foreground">
-                shadcn
+                {session?.usuario?.username}
               </p>
               <p className="truncate text-xs text-sidebar-foreground/70">
-                m@example.com
+                {session?.usuario?.email}
               </p>
             </div>
             <span className="ml-auto text-xs text-sidebar-foreground/60 group-data-[collapsible=icon]:hidden">

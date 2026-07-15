@@ -71,6 +71,15 @@ export const appNavigationItems: NavigationItem[] = [
     },
   },
   {
+    label: "Funcionários",
+    href: "/funcionarios",
+    icon: Users,
+    requiredPermission: {
+      modulo: "funcionario",
+      acao: "listar",
+    },
+  },
+  {
     label: "Convênios",
     href: "/convenios",
     icon: HeartHandshake,

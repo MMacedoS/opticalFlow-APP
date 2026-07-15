@@ -1,4 +1,3 @@
-export async function getCustomers() {}
 import { httpClient } from "@/utils/axios";
 
 export async function ChangeStatusCustomer(

@@ -13,26 +13,26 @@ import {
 } from "@/app/layouts/components/ui/dropdown-menu";
 import { EllipsisVertical, Trash2 } from "lucide-react";
 import { AlertConfirm } from "@/components/alert/AlertConfirm";
-import type { Customer } from "../types/customer.type";
-import { CustomerForm } from "./CustomerForm";
-import { useCustomerDelete } from "../hooks/useCustomerDelete";
-import { useCustomerStatus } from "../hooks/useCustomerStatus";
+import type { Employee } from "../types/employee.interface";
+import { useEmployeeDelete } from "../hooks/useEmployeerDelete";
+import { useEmployeeStatus } from "../hooks/useEmployeeStatus";
+import { EmployeeForm } from "./EmployeeForm";
 
-export function CustomerCard(data: Customer) {
+export function EmployeeCard(data: Employee) {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [textAlert, setTextAlert] = useState("");
   const [descriptionAlert, setDescriptionAlert] = useState("");
 
   const [actionConfirm, setActionConfirm] = useState<() => void>(() => {});
 
-  const deleteCustomer = useCustomerDelete();
+  const deleteEmployee = useEmployeeDelete();
 
   const handleExcluir = () => {
-    deleteCustomer.mutate(data.id as string);
+    deleteEmployee.mutate(data.id as string);
     setIsAlertOpen(false);
   };
 
-  const changeStatusApi = useCustomerStatus();
+  const changeStatusApi = useEmployeeStatus();
 
   const handleChangeStatus = ({
     newStatus,
@@ -76,8 +76,8 @@ export function CustomerCard(data: Customer) {
                   <DropdownMenuItem
                     onClick={() =>
                       openAlertStandart(
-                        `Tem certeza de que deseja EXCLUIR Cliente?`,
-                        `Cliente "${data.pessoa.nome}" será excluída permanentemente.`,
+                        `Tem certeza de que deseja EXCLUIR funcionario?`,
+                        `Funcionario "${data.pessoa.nome}" será excluída permanentemente.`,
                         () => handleExcluir(),
                       )
                     }
@@ -104,7 +104,7 @@ export function CustomerCard(data: Customer) {
               data.pessoa.contatos[0].tipo ? (
                 <WhatsappButton
                   numero="${data.contatos[0].contato}"
-                  message="Olá, gostaria de entrar em contato com Cliente ${data.nome}."
+                  message="Olá, gostaria de entrar em contato com Funcionario ${data.nome}."
                 />
               ) : (
                 ""
@@ -114,27 +114,27 @@ export function CustomerCard(data: Customer) {
               Situação:{" "}
               <span
                 className={`${
-                  data.status === "ativo"
+                  data.pessoa.status === "ativo"
                     ? "text-green-500"
-                    : data.status === "inativo"
+                    : data.pessoa.status === "inativo"
                       ? "text-red-500"
                       : "text-yellow-500"
                 }`}
               >
-                {data.status}{" "}
+                {data.pessoa.status}{" "}
               </span>
             </p>
           </>
         }
         footer={
           <>
-            {data.status === "ativo" ? (
+            {data.pessoa.status === "ativo" ? (
               <Button
                 variant="destructive"
                 onClick={() =>
                   openAlertStandart(
-                    "Tem certeza de que deseja DESATIVAR Cliente?",
-                    `Cliente "${data.pessoa.nome}" será desativada.`,
+                    "Tem certeza de que deseja DESATIVAR Funcionario?",
+                    `Funcionario "${data.pessoa.nome}" será desativada.`,
                     () =>
                       handleChangeStatus({
                         newStatus: "inativo",
@@ -152,8 +152,8 @@ export function CustomerCard(data: Customer) {
                 className="bg-green-300 text-amber-50 hover:bg-green-400 hover:text-amber-50"
                 onClick={() =>
                   openAlertStandart(
-                    "Tem certeza de que deseja ATIVAR Cliente?",
-                    `Cliente "${data.pessoa.nome}" será ativada.`,
+                    "Tem certeza de que deseja ATIVAR Funcionario?",
+                    `Funcionario "${data.pessoa.nome}" será ativada.`,
                     () =>
                       handleChangeStatus({
                         newStatus: "ativo",
@@ -166,8 +166,7 @@ export function CustomerCard(data: Customer) {
                 Ativar
               </Button>
             )}
-
-            <CustomerForm
+            <EmployeeForm
               initialValues={{ ...data, pessoa: data.pessoa || {} }}
             />
           </>
