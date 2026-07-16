@@ -12,6 +12,7 @@ import {
   UserKey,
   Building,
   HeartHandshake,
+  HatGlasses,
 } from "lucide-react";
 
 export type NavigationItem = {
@@ -76,6 +77,15 @@ export const appNavigationItems: NavigationItem[] = [
     icon: Users,
     requiredPermission: {
       modulo: "funcionario",
+      acao: "listar",
+    },
+  },
+  {
+    label: "Oftalmologistas",
+    href: "/oftalmologistas",
+    icon: HatGlasses,
+    requiredPermission: {
+      modulo: "oftalmologista",
       acao: "listar",
     },
   },
