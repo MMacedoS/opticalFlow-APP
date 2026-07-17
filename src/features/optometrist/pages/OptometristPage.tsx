@@ -2,11 +2,11 @@ import { CardPage } from "@/components/cards/CardPage";
 import { useState } from "react";
 import { PaginationIconsOnly } from "@/components/paginationOnly/PaginationIconsOnly";
 import { useAuthStore } from "@/stores/auth.store";
-import { useOphthalmologistsList } from "../hooks/useOphthalmologistList";
-import { OphthalmologistForm } from "../components/OphthalmologistForm";
-import { OphthalmologistCard } from "../components/OphthalmologistCard";
+import { useOptometristsList } from "../hooks/useOptometristList";
+import { OptometristForm } from "../components/OptometristForm";
+import { OptometristCard } from "../components/OptometristCard";
 
-export function OphthalmologistPage() {
+export function OptometristPage() {
   const session = useAuthStore((state) => state.session);
   const [filters, setFilters] = useState({
     page: 1,
@@ -14,7 +14,7 @@ export function OphthalmologistPage() {
     search: "",
   });
 
-  const { data, isLoading, isError } = useOphthalmologistsList(filters);
+  const { data, isLoading, isError } = useOptometristsList(filters);
 
   const handleLimitChange = (newLimit: number) => {
     setFilters((prev) => ({
@@ -29,20 +29,20 @@ export function OphthalmologistPage() {
   };
 
   const paginationData = data?.data?.pagination;
-  const branches = data?.data?.ophthalmologists || [];
+  const branches = data?.data?.optometrists || [];
 
   return (
     <>
       <CardPage
-        title="Oftalmologistas"
-        description="Lista de Oftalmologistas cadastradas"
-        action={<OphthalmologistForm />}
+        title="Optometrista"
+        description="Lista de Optometrista cadastradas"
+        action={<OptometristForm />}
         children={
           <>
             <div className="mb-2">
               <input
                 type="text"
-                placeholder="Filtrar Oftalmologistas..."
+                placeholder="Filtrar Optometrista..."
                 value={filters.search}
                 onChange={(e) =>
                   setFilters((prev) => ({
@@ -56,13 +56,13 @@ export function OphthalmologistPage() {
             </div>
 
             <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 bg-gray-50 p-4 rounded-lg">
-              {isLoading && <p>Carregando oftalmologista...</p>}
+              {isLoading && <p>Carregando optometrista...</p>}
               {isError && <p>Erro ao carregar dados do servidor.</p>}
 
               {branches.map(
                 (item) =>
                   session?.usuario?.pessoaId !== item.pessoa.id && (
-                    <OphthalmologistCard key={item.id} {...item} />
+                    <OptometristCard key={item.id} {...item} />
                   ),
               )}
             </div>

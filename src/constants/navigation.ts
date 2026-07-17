@@ -13,6 +13,7 @@ import {
   Building,
   HeartHandshake,
   HatGlasses,
+  EyeDashed,
 } from "lucide-react";
 
 export type NavigationItem = {
@@ -86,6 +87,15 @@ export const appNavigationItems: NavigationItem[] = [
     icon: HatGlasses,
     requiredPermission: {
       modulo: "oftalmologista",
+      acao: "listar",
+    },
+  },
+  {
+    label: "Optometristas",
+    href: "/optometristas",
+    icon: EyeDashed,
+    requiredPermission: {
+      modulo: "optometrista",
       acao: "listar",
     },
   },
