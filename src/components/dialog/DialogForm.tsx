@@ -1,6 +1,6 @@
 import { Pencil, type LucideIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
-import { buttonVariants } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 
 type FormProps = {
   children: React.ReactNode;
@@ -25,12 +25,15 @@ export function DialogForm({
             variant: variant,
             size: "sm",
           })}
-        >
-          <Icon className="size-4" />
-          <span>{title}</span>
-        </DialogTrigger>
+          render={
+            <Button className="flex items-center gap-2">
+              <Icon className="size-4" />
+              <span>{title}</span>
+            </Button>
+          }
+        />
         <DialogContent
-          className={`${width} mt-4 max-h-dvh overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-border/50 scrollbar-track-transparent`}
+          className={`mt-4 max-h-dvh overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-border/50 scrollbar-track-transparent ${width} `}
         >
           {children}
         </DialogContent>

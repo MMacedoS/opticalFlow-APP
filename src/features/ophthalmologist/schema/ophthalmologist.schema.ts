@@ -1,4 +1,4 @@
-import { personSchema } from "@/schema/person.schema";
+import { personSchema } from "@/features/people/schema/people.schema";
 import z from "zod/v4";
 
 export const ophthalmologistSchema = z.object({

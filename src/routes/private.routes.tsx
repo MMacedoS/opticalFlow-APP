@@ -11,6 +11,8 @@ import { AgreementPage } from "@/features/agreement";
 import { EmployeePage } from "@/features/employees/pages/EmployeePage";
 import { OphthalmologistPage } from "@/features/ophthalmologist/pages/OphthalmologistPage";
 import { OptometristPage } from "@/features/optometrist/pages/OptometristPage";
+import { SchedulePage } from "@/features/schedule/pages/SchedulePage";
+import { PeoplePage } from "@/features/people";
 
 export const privateRoutes: RouteObject[] = [
   {
@@ -54,6 +56,14 @@ export const privateRoutes: RouteObject[] = [
           {
             path: "/optometristas/*",
             element: <OptometristPage />,
+          },
+          {
+            path: "/agendas/*",
+            element: <SchedulePage />,
+          },
+          {
+            path: "/pessoas",
+            element: <PeoplePage />,
           },
         ],
       },

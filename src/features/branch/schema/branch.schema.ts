@@ -1,6 +1,6 @@
+import { personSchema } from "@/features/people/schema/people.schema";
 import { addressSchema } from "@/schema/address.schema";
 import { contactSchema } from "@/schema/contact.schema";
-import { personSchema } from "@/schema/person.schema";
 import { isValidCNPJ } from "@/utils/validators";
 import z from "zod/v4";
 

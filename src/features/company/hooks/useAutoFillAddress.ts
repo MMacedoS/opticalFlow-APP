@@ -1,7 +1,7 @@
+import type { addressSchema } from "@/schema/address.schema";
 import { fetchAddressByCep } from "@/utils/viacep";
 import { useEffect } from "react";
 import type { UseFormSetValue } from "react-hook-form";
-import type { addressSchema } from "../schema/company.schema";
 import type z4 from "zod/v4";
 
 type AddressFormValues = z4.infer<typeof addressSchema>;

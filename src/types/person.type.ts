@@ -7,6 +7,11 @@ export interface Pessoa {
   status: "ativo" | "inativo";
   contatos: Contato[];
   enderecos: Endereco[];
+  usuario?: {
+    id: string;
+    username: string;
+    email: string;
+  };
 }
 
 export interface Endereco {
