@@ -43,3 +43,23 @@ export function maskPhone(value?: string): string {
     .replace(/(\d{5})(\d)/, "$1-$2")
     .substring(0, 15);
 }
+
+export function formatCurrencyDisplay(
+  value: number | string | undefined | null,
+): string {
+  if (value === undefined || value === null || value === "") return "";
+  const numericValue = typeof value === "string" ? parseFloat(value) : value;
+  if (isNaN(numericValue)) return "";
+
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(numericValue);
+}
+
+export function parseCurrencyInput(inputValue: string): number {
+  const digitsOnly = inputValue.replace(/\D/g, "");
+  if (!digitsOnly) return 0;
+
+  return parseFloat(digitsOnly) / 100;
+}

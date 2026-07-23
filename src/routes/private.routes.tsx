@@ -13,6 +13,8 @@ import { OphthalmologistPage } from "@/features/ophthalmologist/pages/Ophthalmol
 import { OptometristPage } from "@/features/optometrist/pages/OptometristPage";
 import { SchedulePage } from "@/features/schedule/pages/SchedulePage";
 import { PeoplePage } from "@/features/people";
+import { AppointmentPage } from "@/features/appointments";
+import { ProductPage } from "@/features/products";
 
 export const privateRoutes: RouteObject[] = [
   {
@@ -64,6 +66,14 @@ export const privateRoutes: RouteObject[] = [
           {
             path: "/pessoas",
             element: <PeoplePage />,
+          },
+          {
+            path: "/consultas",
+            element: <AppointmentPage />,
+          },
+          {
+            path: "/produtos/*",
+            element: <ProductPage />,
           },
         ],
       },

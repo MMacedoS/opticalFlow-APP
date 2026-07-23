@@ -20,12 +20,20 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
+  SidebarMenuSub,
   SidebarMenuItem,
   SidebarSeparator,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from "@/app/layouts/components/ui/sidebar";
 import { useAuthStore } from "@/stores/auth.store";
 import { hasRouteAccess } from "@/utils/authorization";
-import type { LucideIcon } from "lucide-react";
+import { ChevronRight, type LucideIcon } from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 export function SidebarItemIcon({ icon: Icon }: { icon: LucideIcon }) {
   return (
@@ -40,9 +48,24 @@ export function AppSidebar() {
   const session = useAuthStore((state) => state.session);
   const clearSession = useAuthStore((state) => state.clearSession);
 
-  const allowedNavigationItems = appNavigationItems.filter((item) =>
-    hasRouteAccess(session, item.requiredPermission),
-  );
+  const allowedNavigationItems = appNavigationItems
+    .filter(
+      (item) =>
+        !item.requiredPermission ||
+        hasRouteAccess(session, item.requiredPermission),
+    )
+    .map((item) => {
+      if (!item.children?.length) return item;
+
+      const allowedSubitems = item.children.filter(
+        (sub) =>
+          !sub.requiredPermission ||
+          hasRouteAccess(session, sub.requiredPermission),
+      );
+
+      return { ...item, children: allowedSubitems };
+    })
+    .filter((item) => !item.children || item.children.length > 0);
 
   return (
     <Sidebar
@@ -77,6 +100,84 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {allowedNavigationItems.map((item) => {
+                const hasSubitems = item.children && item.children.length > 0;
+                const isMainActive =
+                  pathname === item.href ||
+                  pathname.startsWith(`${item.href}/`);
+                const isAnySubitemActive =
+                  hasSubitems &&
+                  item.children?.some((sub) => pathname === sub.href);
+                const isActive = isMainActive || isAnySubitemActive;
+
+                if (!hasSubitems) {
+                  return (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton
+                        isActive={isActive}
+                        tooltip={item.label}
+                        className="rounded-xl"
+                        render={<NavLink to={item.href} />}
+                      >
+                        <SidebarItemIcon icon={item.icon} />
+                        <span className="group-data-[collapsible=icon]:hidden">
+                          {item.label}
+                        </span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                }
+
+                return (
+                  <Collapsible
+                    key={item.href}
+                    defaultOpen={isActive}
+                    className="group/collapsible"
+                  >
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger
+                        render={
+                          <SidebarMenuButton
+                            isActive={isActive}
+                            tooltip={item.label}
+                            className="rounded-xl"
+                          >
+                            <SidebarItemIcon icon={item.icon} />
+                            <span className="group-data-[collapsible=icon]:hidden">
+                              {item.label}
+                            </span>
+                            <ChevronRight className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 group-data-[collapsible=icon]:hidden" />
+                          </SidebarMenuButton>
+                        }
+                      />
+
+                      <CollapsibleContent>
+                        <SidebarMenuSub className="mx-0 px-2 group-data-[collapsible=icon]:hidden">
+                          {item.children?.map((subItem) => {
+                            const isSubActive = pathname === subItem.href;
+
+                            return (
+                              <SidebarMenuSubItem key={subItem.href}>
+                                <SidebarMenuSubButton
+                                  isActive={isSubActive}
+                                  className="rounded-lg pl-6 text-sm"
+                                  render={<NavLink to={subItem.href} />}
+                                >
+                                  <SidebarItemIcon icon={subItem.icon} />
+                                  <span>{subItem.label}</span>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            );
+                          })}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+                );
+              })}
+            </SidebarMenu>
+
+            {/* <SidebarMenu> */}
+            {/* {allowedNavigationItems.map((item) => {
                 const isActive =
                   pathname === item.href ||
                   pathname.startsWith(`${item.href}/`);
@@ -96,9 +197,9 @@ export function AppSidebar() {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
-              })}
+              })} */}
 
-              {/* {["Models", "Documentation", "Settings"].map((item) => (
+            {/* {["Models", "Documentation", "Settings"].map((item) => (
                 <SidebarMenuItem key={item}>
                   <SidebarMenuButton tooltip={item} className="rounded-xl">
                     <SidebarItemIcon label={item} />
@@ -111,7 +212,7 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))} */}
-            </SidebarMenu>
+            {/* </SidebarMenu> */}
           </SidebarGroupContent>
         </SidebarGroup>
 
