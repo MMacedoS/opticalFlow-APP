@@ -30,15 +30,15 @@ export function ProductPage() {
   const Products = data?.data?.products || [];
   return (
     <CardPage
-      title="Consultas"
-      description="Gerenciamento de consultas"
+      title="Produtos e Serviços"
+      description="Gerenciamento de Produtos, exames, consultas e serviços prestados pela empresa."
       action={<ProductForm />}
       children={
         <>
           <div className="mb-2">
             <input
               type="text"
-              placeholder="Filtrar convênios..."
+              placeholder="Filtrar produtos..."
               value={filters.search}
               onChange={(e) =>
                 setFilters((prev) => ({

@@ -6,7 +6,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { Controller } from "react-hook-form";
+import { Controller, useFieldArray, useWatch } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -21,9 +21,9 @@ import { cn } from "@/lib/utils";
 import { DialogClose } from "@/components/ui/dialog";
 import { useScheduleForm } from "../hooks/useScheduleForm";
 import type { ScheduleFormValues } from "../schema/scheduleSchema";
-import { CalendarIcon, Pencil } from "lucide-react";
+import { CalendarIcon, Pencil, Plus, Trash2 } from "lucide-react";
 import { usePeople } from "@/features/people/hooks/usePeople";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AsyncSelect from "react-select/async";
 import type { SelectOption } from "@/types/type";
 import { useOphthalmologistsList } from "@/features/ophthalmologist/hooks/useOphthalmologistList";
@@ -31,6 +31,8 @@ import { useOptometristsList } from "@/features/optometrist/hooks/useOptometrist
 import { useScheduleDelete } from "../hooks/useScheduleDelete";
 import { AlertConfirm } from "@/components/alert/AlertConfirm";
 import { useCustomerList } from "@/features/customer/hooks/useCustomerList";
+import { getProducts } from "@/features/products/api/getProduct";
+import type { Product } from "@/features/products/types/product.type";
 
 interface ScheduleFormProps {
   initialValues?: Partial<ScheduleFormValues>;
@@ -43,7 +45,10 @@ export function ScheduleForm({ initialValues, onClose }: ScheduleFormProps) {
     onClose,
   );
 
-  const temResponsavel = form.watch("temResponsavel");
+  const temResponsavel = useWatch({
+    control: form.control,
+    name: "temResponsavel",
+  });
 
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCustomer, setSearchCustomer] = useState("");
@@ -63,11 +68,53 @@ export function ScheduleForm({ initialValues, onClose }: ScheduleFormProps) {
     page: 1,
     limit: 20,
   });
+
   const optometristas = useOptometristsList({
     search: searchOptometro,
     page: 1,
     limit: 20,
   });
+
+  const pessoaId = form.watch("pessoaId");
+  const profissionalId = form.watch("profissionalId");
+  const queixaPrincipal = form.watch("queixa_principal");
+  const itensOS = useWatch({
+    control: form.control,
+    name: "ordemServico.itens",
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "ordemServico.itens", // Caminho exato mapeado no Zod
+  });
+
+  const deveHabilitarOS = Boolean(pessoaId && profissionalId);
+
+  useEffect(() => {
+    if (deveHabilitarOS && queixaPrincipal) {
+      form.setValue("ordemServico.descricao", queixaPrincipal, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+  }, [queixaPrincipal, deveHabilitarOS, form]);
+
+  useEffect(() => {
+    const listaItens = itensOS || [];
+
+    const total = listaItens.reduce((acc, item) => {
+      const qtd = Number(item?.quantidade) || 0;
+      const valor = Number(item?.valor_unitario) || 0;
+      const desc = Number(item?.desconto) || 0;
+
+      const subtotal = qtd * valor - desc;
+      return acc + (subtotal > 0 ? subtotal : 0);
+    }, 0);
+
+    form.setValue("ordemServico.valor_total", total, {
+      shouldValidate: true,
+    });
+  }, [itensOS, form]);
 
   const peoples = usePeople({ search: searchTerm, limit: 20, page: 1 });
 
@@ -139,6 +186,27 @@ export function ScheduleForm({ initialValues, onClose }: ScheduleFormProps) {
     );
   };
 
+  const loadProdutosOptions = async (inputValue: string) => {
+    if (inputValue.length < 2) return [];
+
+    try {
+      const response = getProducts({
+        search: inputValue,
+        limit: 1000,
+        page: 1,
+      });
+
+      return (await response).data.products.map((p: Product) => ({
+        value: p.id,
+        label: p.nome,
+        preco: p.preco_venda,
+      }));
+    } catch (error) {
+      console.error("Erro ao buscar produtos:", error);
+      return [];
+    }
+  };
+
   const deleteEvent = useScheduleDelete();
 
   const handleExcluir = (id: string) => {
@@ -168,7 +236,7 @@ export function ScheduleForm({ initialValues, onClose }: ScheduleFormProps) {
       title={isEditing ? "Editar Evento" : "Novo Evento"}
       icon={isEditing ? Pencil : CalendarIcon}
       variant={isEditing ? "destructive" : "default"}
-      width="max-w-4xl!"
+      width="max-w-6xl!"
     >
       <CardPage
         title={isEditing ? "Modificar Consulta" : "Agendar Paciente"}
@@ -296,13 +364,15 @@ export function ScheduleForm({ initialValues, onClose }: ScheduleFormProps) {
                   <input
                     type="checkbox"
                     id="temResponsavel"
-                    {...form.register("temResponsavel")}
-                    onChange={(e) => {
-                      form.setValue("temResponsavel", e.target.checked);
-                      if (!e.target.checked) {
-                        form.setValue("clienteId", null); // Limpa o cliente se desmarcar
-                      }
-                    }}
+                    {...form.register("temResponsavel", {
+                      onChange: (e) => {
+                        if (!e.target.checked) {
+                          form.setValue("clienteId", null, {
+                            shouldValidate: true,
+                          });
+                        }
+                      },
+                    })}
                     className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                   />
                   <label
@@ -340,7 +410,14 @@ export function ScheduleForm({ initialValues, onClose }: ScheduleFormProps) {
                                   .map((p) => ({
                                     value: p.id,
                                     label: p.pessoa.nome,
-                                  }))[0] || null
+                                  }))[0] ||
+                                (initialValues?.cliente &&
+                                initialValues.cliente.id === field.value
+                                  ? {
+                                      value: initialValues.cliente.id,
+                                      label: initialValues.cliente.pessoa.nome,
+                                    }
+                                  : null)
                               : null
                           }
                           onChange={(option) => {
@@ -503,6 +580,7 @@ export function ScheduleForm({ initialValues, onClose }: ScheduleFormProps) {
                   </Field>
                 )}
               />
+
               <Controller
                 name="observacao"
                 control={form.control}
@@ -518,6 +596,267 @@ export function ScheduleForm({ initialValues, onClose }: ScheduleFormProps) {
                 )}
               />
             </div>
+
+            {deveHabilitarOS && (
+              <div className="border border-slate-200 rounded-xl p-5 bg-slate-50/30 space-y-4 animate-in fade-in duration-200">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <div>
+                    <h3 className="font-semibold text-base text-slate-900">
+                      Serviço ou Produto
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                      Adicione produtos ou serviços a este atendimento.
+                    </p>
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                    onClick={() =>
+                      append({
+                        produtoId: "",
+                        descricao_servico: "",
+                        quantidade: 1,
+                        valor_unitario: 0,
+                        desconto: 0,
+                      })
+                    }
+                  >
+                    <Plus className="mr-1.5 h-4 w-4" />
+                    Adicionar Item
+                  </Button>
+                </div>
+
+                {fields.length === 0 ? (
+                  <p className="text-center py-6 text-sm text-slate-400 bg-white border border-dashed rounded-lg">
+                    Nenhum item adicionado à ordem de serviço ainda.
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {fields.map((field, index) => {
+                      const currentQty =
+                        form.watch(`ordemServico.itens.${index}.quantidade`) ||
+                        0;
+                      const currentVal =
+                        form.watch(
+                          `ordemServico.itens.${index}.valor_unitario`,
+                        ) || 0;
+                      const currentDesc =
+                        form.watch(`ordemServico.itens.${index}.desconto`) || 0;
+                      const subtotalItem =
+                        currentQty * currentVal - currentDesc;
+
+                      return (
+                        <div
+                          key={field.id}
+                          className="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-12 gap-2 items-end bg-white p-3 border border-slate-100 rounded-lg shadow-sm"
+                        >
+                          <div className="col-span-6">
+                            <Controller
+                              name={
+                                `ordemServico.itens.${index}.produtoId` as const
+                              }
+                              control={form.control}
+                              render={({ field, fieldState }) => {
+                                const itemAtualId = field.value;
+
+                                const valorSelecionado = itemAtualId
+                                  ? {
+                                      value: itemAtualId,
+                                      label:
+                                        form.getValues(
+                                          `ordemServico.itens.${index}.descricao_servico`,
+                                        ) || "Produto Selecionado",
+                                    }
+                                  : null;
+
+                                return (
+                                  <div
+                                    data-invalid={fieldState.invalid}
+                                    className="flex flex-col gap-1"
+                                  >
+                                    <label className="text-[11px] font-medium text-slate-500 uppercase">
+                                      Produto / Serviço
+                                    </label>
+
+                                    <AsyncSelect<
+                                      {
+                                        value: string;
+                                        label: string;
+                                        preco: number;
+                                      },
+                                      false
+                                    >
+                                      cacheOptions
+                                      defaultOptions
+                                      isClearable
+                                      placeholder="Buscar produto ou SKU..."
+                                      className="text-sm"
+                                      classNamePrefix="react-select"
+                                      loadOptions={loadProdutosOptions}
+                                      value={
+                                        valorSelecionado as {
+                                          value: string;
+                                          label: string;
+                                          preco: number;
+                                        } | null
+                                      }
+                                      onChange={(option) => {
+                                        if (option) {
+                                          field.onChange(option.value);
+
+                                          form.setValue(
+                                            `ordemServico.itens.${index}.descricao_servico`,
+                                            option.label,
+                                          );
+                                          form.setValue(
+                                            `ordemServico.itens.${index}.valor_unitario`,
+                                            option.preco,
+                                            {
+                                              shouldValidate: true,
+                                            },
+                                          );
+                                        } else {
+                                          field.onChange("");
+                                          form.setValue(
+                                            `ordemServico.itens.${index}.descricao_servico`,
+                                            "",
+                                          );
+                                          form.setValue(
+                                            `ordemServico.itens.${index}.valor_unitario`,
+                                            0,
+                                          );
+                                        }
+                                      }}
+                                      onBlur={field.onBlur}
+                                      noOptionsMessage={({ inputValue }) =>
+                                        inputValue.length < 2
+                                          ? "Digite 2 ou mais caracteres"
+                                          : "Nenhum produto encontrado"
+                                      }
+                                      loadingMessage={() =>
+                                        "Buscando produtos..."
+                                      }
+                                    />
+
+                                    {fieldState.invalid && fieldState.error && (
+                                      <span className="text-[10px] text-red-500 font-medium">
+                                        {fieldState.error.message}
+                                      </span>
+                                    )}
+                                  </div>
+                                );
+                              }}
+                            />
+                          </div>
+
+                          <div className="col-span-3 hidden">
+                            <label className="text-[11px] font-medium text-slate-500 uppercase">
+                              Obs / Detalhes
+                            </label>
+                            <Input
+                              {...form.register(
+                                `ordemServico.itens.${index}.descricao_servico` as const,
+                              )}
+                              placeholder="Ex: Lente antireflexo"
+                            />
+                          </div>
+
+                          {/* Campo: Quantidade */}
+                          <div className="col-span-1">
+                            <label className="text-[11px] font-medium text-slate-500 uppercase">
+                              Qtd
+                            </label>
+                            <Input
+                              type="number"
+                              min="1"
+                              {...form.register(
+                                `ordemServico.itens.${index}.quantidade` as const,
+                                { valueAsNumber: true },
+                              )}
+                            />
+                          </div>
+
+                          {/* Campo: Valor Unitário */}
+                          <div className="col-span-2">
+                            <label className="text-[11px] font-medium text-slate-500 uppercase">
+                              R$ Unitário
+                            </label>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              {...form.register(
+                                `ordemServico.itens.${index}.valor_unitario` as const,
+                                { valueAsNumber: true },
+                              )}
+                            />
+                          </div>
+
+                          {/* Campo: Desconto */}
+                          <div className="col-span-1">
+                            <label className="text-[11px] font-medium text-slate-500 uppercase">
+                              Desc.
+                            </label>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              {...form.register(
+                                `ordemServico.itens.${index}.desconto` as const,
+                                { valueAsNumber: true },
+                              )}
+                            />
+                          </div>
+
+                          {/* Exibição Visual do Subtotal do Item */}
+                          <div className="col-span-1 text-center pb-2.5">
+                            <span className="text-xs font-semibold text-slate-700 block mb-1">
+                              Subtotal
+                            </span>
+                            <span className="text-xs text-slate-600 font-medium">
+                              R${" "}
+                              {subtotalItem > 0
+                                ? subtotalItem.toFixed(2)
+                                : "0.00"}
+                            </span>
+                          </div>
+
+                          {/* Botão Deletar Item da Linha */}
+                          <div className="col-span-1 text-right">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg h-9 w-9"
+                              onClick={() => remove(index)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* INFORMAÇÕES FINANCEIRAS DE RESUMO DO RODAPÉ DA OS */}
+                <div className="flex items-center justify-between bg-slate-100/60 p-3 rounded-lg border border-slate-200 mt-2">
+                  <span className="text-xs font-medium text-slate-600 uppercase tracking-wide">
+                    Resumo Financeiro da OS
+                  </span>
+                  <div className="text-right">
+                    <span className="text-sm font-semibold text-slate-900 block">
+                      Total Geral: R${" "}
+                      {form.getValues("ordemServico.valor_total")?.toFixed(2) ||
+                        "0.00"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
           </FieldGroup>
 
           {errorMessage && (

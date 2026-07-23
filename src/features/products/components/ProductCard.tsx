@@ -15,6 +15,7 @@ import type { Product } from "../types/product.type";
 import { useProductStatus } from "../hooks/useProductStatus";
 import { useProductDelete } from "../hooks/useProductDelete";
 import { ProductForm } from "./ProductForm";
+import { formatCurrencyDisplay } from "@/utils/masks";
 
 export function ProductCard(data: Product) {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -93,7 +94,7 @@ export function ProductCard(data: Product) {
           </DropdownMenu>
         }
         content={
-          <div className="flex flex-col gap-4 p-2">
+          <div className="flex flex-col p-2">
             <div className="flex items-center justify-between gap-4 border-b border-slate-100 pb-3">
               <div className="space-y-0.5">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
@@ -129,6 +130,24 @@ export function ProductCard(data: Product) {
                       ? "Inativo"
                       : data.ativo}
                 </span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between gap-4 border-b border-slate-100 pb-3">
+              <div className="space-y-0.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  Valor
+                </span>
+                <h4 className="text-base font-semibold tracking-tight text-slate-900">
+                  {formatCurrencyDisplay(data.preco_venda) ?? "Sem nome"}
+                </h4>
+              </div>
+              <div className="text-right">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  Estoque
+                </span>
+                <h4 className="text-base font-semibold tracking-tight text-slate-900">
+                  {data.estoque_itens?.[0]?.quantidade ?? 0}
+                </h4>
               </div>
             </div>
           </div>

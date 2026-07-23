@@ -99,7 +99,7 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {allowedNavigationItems.map((item) => {
+              {allowedNavigationItems.map((item, index) => {
                 const hasSubitems = item.children && item.children.length > 0;
                 const isMainActive =
                   pathname === item.href ||
@@ -111,7 +111,7 @@ export function AppSidebar() {
 
                 if (!hasSubitems) {
                   return (
-                    <SidebarMenuItem key={item.href}>
+                    <SidebarMenuItem key={index}>
                       <SidebarMenuButton
                         isActive={isActive}
                         tooltip={item.label}
@@ -129,49 +129,50 @@ export function AppSidebar() {
 
                 return (
                   <Collapsible
-                    key={item.href}
+                    key={index}
                     defaultOpen={isActive}
                     className="group/collapsible"
-                  >
-                    <SidebarMenuItem>
-                      <CollapsibleTrigger
-                        render={
-                          <SidebarMenuButton
-                            isActive={isActive}
-                            tooltip={item.label}
-                            className="rounded-xl"
-                          >
-                            <SidebarItemIcon icon={item.icon} />
-                            <span className="group-data-[collapsible=icon]:hidden">
-                              {item.label}
-                            </span>
-                            <ChevronRight className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 group-data-[collapsible=icon]:hidden" />
-                          </SidebarMenuButton>
-                        }
-                      />
+                    render={
+                      <SidebarMenuItem>
+                        <CollapsibleTrigger
+                          render={
+                            <SidebarMenuButton
+                              isActive={isActive}
+                              tooltip={item.label}
+                              className="rounded-xl"
+                            >
+                              <SidebarItemIcon icon={item.icon} />
+                              <span className="group-data-[collapsible=icon]:hidden">
+                                {item.label}
+                              </span>
+                              <ChevronRight className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 group-data-[collapsible=icon]:hidden" />
+                            </SidebarMenuButton>
+                          }
+                        />
 
-                      <CollapsibleContent>
-                        <SidebarMenuSub className="mx-0 px-2 group-data-[collapsible=icon]:hidden">
-                          {item.children?.map((subItem) => {
-                            const isSubActive = pathname === subItem.href;
+                        <CollapsibleContent>
+                          <SidebarMenuSub className="mx-0 px-2 group-data-[collapsible=icon]:hidden">
+                            {item.children?.map((subItem) => {
+                              const isSubActive = pathname === subItem.href;
 
-                            return (
-                              <SidebarMenuSubItem key={subItem.href}>
-                                <SidebarMenuSubButton
-                                  isActive={isSubActive}
-                                  className="rounded-lg pl-6 text-sm"
-                                  render={<NavLink to={subItem.href} />}
-                                >
-                                  <SidebarItemIcon icon={subItem.icon} />
-                                  <span>{subItem.label}</span>
-                                </SidebarMenuSubButton>
-                              </SidebarMenuSubItem>
-                            );
-                          })}
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
-                    </SidebarMenuItem>
-                  </Collapsible>
+                              return (
+                                <SidebarMenuSubItem key={subItem.href}>
+                                  <SidebarMenuSubButton
+                                    isActive={isSubActive}
+                                    className="rounded-lg pl-6 text-sm"
+                                    render={<NavLink to={subItem.href} />}
+                                  >
+                                    <SidebarItemIcon icon={subItem.icon} />
+                                    <span>{subItem.label}</span>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                              );
+                            })}
+                          </SidebarMenuSub>
+                        </CollapsibleContent>
+                      </SidebarMenuItem>
+                    }
+                  />
                 );
               })}
             </SidebarMenu>

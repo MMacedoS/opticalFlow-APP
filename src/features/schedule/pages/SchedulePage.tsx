@@ -179,6 +179,22 @@ export function SchedulePage() {
                       profissional: selectedEvent.profissional,
                       pessoaId: selectedEvent.pessoaId ?? undefined,
                       paciente: selectedEvent.paciente,
+                      clienteId: selectedEvent.clienteId ?? undefined,
+                      cliente: selectedEvent.cliente,
+                      temResponsavel: !!selectedEvent.clienteId,
+                      convenioId: selectedEvent.convenioId ?? undefined,
+                      queixa_principal:
+                        selectedEvent.queixa_principal ?? undefined,
+
+                      ordemServico: selectedEvent.ordemServico
+                        ? {
+                            status: selectedEvent.ordemServico.status,
+                            descricao:
+                              selectedEvent.ordemServico.descricao ?? "",
+                            valor_total: selectedEvent.ordemServico.valor_total,
+                            itens: selectedEvent.ordemServico.itens || [],
+                          }
+                        : undefined,
                     }
                   : {
                       dataHora: selectedSlot!.start.toISOString(),

@@ -21,9 +21,11 @@ export function prepareEventSchedule(evento: Evento): MeuEvento {
     profissionalId: evento.profissionalId,
     status: evento.status,
     observacao: evento.observacao,
-    clientId: evento.clientId,
+    clienteId: evento.clienteId,
+    cliente: evento.cliente,
     convenioId: evento.convenioId,
     queixa_principal: evento.queixa_principal,
+    ordemServico: evento.ordemServico,
   };
 }
 

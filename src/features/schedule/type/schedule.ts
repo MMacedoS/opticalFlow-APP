@@ -19,17 +19,38 @@ export interface MeuEvento extends CalendarEvent {
   };
   status: "agendado" | "confirmado" | "cancelado" | "finalizado";
   observacao: string | null;
-  clientId?: string | null;
+  clienteId?: string | null;
+  cliente?: {
+    id: string;
+    pessoa: Pessoa;
+  };
   convenioId?: string | null;
   queixa_principal?: string | null;
+  ordemServico?: {
+    status: "aberta" | "orcamento" | "faturada" | "finalizada" | "cancelada";
+    descricao?: string | null;
+    valor_total: number;
+    itens: {
+      produtoId?: string | null;
+      descricao_servico?: string | null;
+      quantidade: number;
+      valor_unitario: number;
+      desconto: number;
+    }[];
+  };
 }
 
 export interface Evento {
-  id: string; // cuid() é uma string
+  id: string;
   empresaId: string;
   filialId: string;
   pessoaId: string | null;
   paciente?: Pessoa;
+  clienteId?: string | null;
+  cliente?: {
+    id: string;
+    pessoa: Pessoa;
+  };
   profissionalId: string | null;
   profissional?: {
     id: string;
@@ -42,6 +63,18 @@ export interface Evento {
   clientId?: string | null;
   convenioId?: string | null;
   queixa_principal?: string | null;
+  ordemServico?: {
+    status: "aberta" | "orcamento" | "faturada" | "finalizada" | "cancelada";
+    descricao?: string | null;
+    valor_total: number;
+    itens: {
+      produtoId?: string | null;
+      descricao_servico?: string | null;
+      quantidade: number;
+      valor_unitario: number;
+      desconto: number;
+    }[];
+  };
 }
 
 export interface ScheduleProps {
