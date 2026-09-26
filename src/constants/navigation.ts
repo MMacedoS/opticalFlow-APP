@@ -24,6 +24,7 @@ import {
   UnfoldHorizontal,
   FoldHorizontal,
   FlaskConical,
+  Truck,
 } from "lucide-react";
 
 export type NavigationItem = {
@@ -132,6 +133,15 @@ export const appNavigationItems: NavigationItem[] = [
         icon: HeartHandshake,
         requiredPermission: {
           modulo: "convenio",
+          acao: "listar",
+        },
+      },
+      {
+        label: "Fornecedores",
+        href: "/fornecedores",
+        icon: Truck,
+        requiredPermission: {
+          modulo: "fornecedor",
           acao: "listar",
         },
       },

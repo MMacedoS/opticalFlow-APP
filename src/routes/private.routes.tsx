@@ -74,6 +74,11 @@ const LaboratoryPage = lazy(() =>
     default: module.LaboratoryPage,
   })),
 );
+const SupplierPage = lazy(() =>
+  import("@/features/supplier").then((module) => ({
+    default: module.SupplierPage,
+  })),
+);
 const ServiceOrderPage = lazy(() =>
   import("@/features/service-order").then((module) => ({
     default: module.ServiceOrderPage,
@@ -142,6 +147,10 @@ export const privateRoutes: RouteObject[] = [
           {
             path: "/ordens-servico/*",
             element: <ServiceOrderPage />,
+          },
+          {
+            path: "/fornecedores/*",
+            element: <SupplierPage />,
           },
           {
             path: "/laboratorios/*",
