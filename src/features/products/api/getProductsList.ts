@@ -4,7 +4,7 @@ import type { ProductRequest, ProductResponse } from "../types/product.type";
 export async function getProductsList(
   payload: ProductRequest,
 ): Promise<ProductResponse> {
-  const response = await httpClient.get<ProductResponse>("/products/all", {
+  const response = await httpClient.get<ProductResponse>("/produto/all", {
     params: payload,
   });
 

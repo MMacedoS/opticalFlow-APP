@@ -9,6 +9,6 @@ export async function updateUser(
     throw new Error("ID da usuarios não fornecido.");
   }
   return httpClient
-    .put<UserResponse>(`/usuarios/${id}`, payload)
+    .put<UserResponse>(`/usuario/${id}`, payload)
     .then((response) => response.data);
 }

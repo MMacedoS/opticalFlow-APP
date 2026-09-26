@@ -8,7 +8,7 @@ export async function CreateEmployee(
   payload: EmployeeFormValues,
 ): Promise<EmployeeResponse> {
   const response = await httpClient.post<EmployeeResponse>(
-    "/employees",
+    "/funcionario",
     payload,
   );
   return response.data;

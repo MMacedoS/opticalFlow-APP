@@ -12,6 +12,6 @@ export async function updateCompany(
     throw new Error("ID da empresa não fornecido.");
   }
   return httpClient
-    .put<CompanyResponse>(`/empresas/${id}`, payload)
+    .put<CompanyResponse>(`/empresa/${id}`, payload)
     .then((response) => response.data);
 }

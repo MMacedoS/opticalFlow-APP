@@ -7,7 +7,7 @@ import type {
 export async function getOptometrists(
   payload: OptometristRequest,
 ): Promise<OptometristResponse> {
-  const response = await httpClient.get<OptometristResponse>("/optometrists", {
+  const response = await httpClient.get<OptometristResponse>("/optometrista", {
     params: payload,
   });
 

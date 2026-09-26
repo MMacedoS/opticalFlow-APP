@@ -5,7 +5,7 @@ export async function changeStatusCompany(
   newStatus: "ativo" | "inativo",
 ): Promise<void> {
   try {
-    await httpClient.patch(`/empresas/${companyId}/status`, {
+    await httpClient.patch(`/empresa/${companyId}/status`, {
       status: newStatus,
     });
   } catch (error) {

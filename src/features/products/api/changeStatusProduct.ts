@@ -6,7 +6,7 @@ export async function ChangeStatusProduct(
   newStatus: "ativo" | "inativo",
 ): Promise<void> {
   try {
-    await httpClient.patch(`/products/${productId}/status`, {
+    await httpClient.patch(`/produto/${productId}/status`, {
       status: newStatus,
     });
   } catch (error) {

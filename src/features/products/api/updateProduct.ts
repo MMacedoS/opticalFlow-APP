@@ -20,6 +20,6 @@ export function UpdateProduct(
     return Promise.reject(new Error("ID do produto não fornecido."));
   }
   return httpClient
-    .put<ProductResponse>(`/products/${id}`, payload)
+    .put<ProductResponse>(`/produto/${id}`, payload)
     .then((response) => response.data);
 }

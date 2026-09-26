@@ -19,6 +19,6 @@ export function UpdateBranch(
     return Promise.reject(new Error("ID da filial não fornecido."));
   }
   return httpClient
-    .put<BranchResponse>(`/filiais/${id}`, payload)
+    .put<BranchResponse>(`/filial/${id}`, payload)
     .then((response) => response.data);
 }

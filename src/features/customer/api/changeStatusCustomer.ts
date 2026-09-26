@@ -5,7 +5,7 @@ export async function ChangeStatusCustomer(
   newStatus: "ativo" | "inativo",
 ): Promise<void> {
   try {
-    await httpClient.patch(`/customers/${customerId}/status`, {
+    await httpClient.patch(`/cliente/${customerId}/status`, {
       status: newStatus,
     });
   } catch (error) {

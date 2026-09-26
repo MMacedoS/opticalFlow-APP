@@ -8,7 +8,7 @@ export async function CreateCustomer(
   payload: CustomerFormValues,
 ): Promise<CustomerResponse> {
   const response = await httpClient.post<CustomerResponse>(
-    "/customers",
+    "/cliente",
     payload,
   );
   return response.data;

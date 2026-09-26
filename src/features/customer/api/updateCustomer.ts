@@ -22,6 +22,6 @@ export function UpdateCustomer(
     return Promise.reject(new Error("ID da cliente não fornecido."));
   }
   return httpClient
-    .put<CustomerResponse>(`/customers/${id}`, payload)
+    .put<CustomerResponse>(`/cliente/${id}`, payload)
     .then((response) => response.data);
 }

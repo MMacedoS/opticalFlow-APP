@@ -20,6 +20,6 @@ export function UpdateSchedule(
     return Promise.reject(new Error("ID do evento não fornecido."));
   }
   return httpClient
-    .put<ScheduleListResponse>(`/schedules/${id}`, payload)
+    .put<ScheduleListResponse>(`/agenda/${id}`, payload)
     .then((response) => response.data);
 }

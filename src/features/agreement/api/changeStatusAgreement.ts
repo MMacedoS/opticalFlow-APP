@@ -6,7 +6,7 @@ export async function ChangeStatusAgreement(
   newStatus: "ativo" | "inativo",
 ): Promise<void> {
   try {
-    await httpClient.patch(`/agreements/${agreementId}/status`, {
+    await httpClient.patch(`/convenio/${agreementId}/status`, {
       status: newStatus,
     });
   } catch (error) {

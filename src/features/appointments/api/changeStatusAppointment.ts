@@ -7,7 +7,7 @@ export async function ChangeStatusAppointment(
   newStatus: StatusAtendimento,
 ): Promise<void> {
   try {
-    await httpClient.patch(`/appointments/${appointmentId}/status`, {
+    await httpClient.patch(`/atendimento/${appointmentId}/status`, {
       status: newStatus,
     });
   } catch (error) {

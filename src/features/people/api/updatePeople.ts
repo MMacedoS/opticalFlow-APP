@@ -19,6 +19,6 @@ export function UpdatePeople(
     return Promise.reject(new Error("ID da pessoa não fornecido."));
   }
   return httpClient
-    .put<PeopleResponse>(`/peoples/${id}`, payload)
+    .put<PeopleResponse>(`/pessoa/${id}`, payload)
     .then((response) => response.data);
 }

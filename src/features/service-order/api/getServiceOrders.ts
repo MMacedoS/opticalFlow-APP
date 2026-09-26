@@ -8,7 +8,7 @@ import type {
 export async function getServiceOrders(
   payload: ServiceOrderFilters,
 ): Promise<ServiceOrdersResponse> {
-  const response = await httpClient.get<ServiceOrdersResponse>("/service-orders", {
+  const response = await httpClient.get<ServiceOrdersResponse>("/ordem-servico", {
     params: payload,
   });
 

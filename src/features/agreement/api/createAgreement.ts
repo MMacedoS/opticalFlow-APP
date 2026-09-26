@@ -8,7 +8,7 @@ export async function CreateAgreement(
   payload: AgreementFormValues,
 ): Promise<AgreementResponse> {
   const response = await httpClient.post<AgreementResponse>(
-    "/agreements",
+    "/convenio",
     payload,
   );
   return response.data;

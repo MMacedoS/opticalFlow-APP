@@ -7,7 +7,7 @@ import type {
 export async function getSchedules(
   payload: ScheduleListRequest,
 ): Promise<ScheduleListResponse> {
-  const response = await httpClient.get<ScheduleListResponse>("/schedules", {
+  const response = await httpClient.get<ScheduleListResponse>("/agenda", {
     params: payload,
   });
 

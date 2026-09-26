@@ -22,6 +22,6 @@ export function UpdateAgreement(
     return Promise.reject(new Error("ID da convenio não fornecido."));
   }
   return httpClient
-    .put<AgreementResponse>(`/agreements/${id}`, payload)
+    .put<AgreementResponse>(`/convenio/${id}`, payload)
     .then((response) => response.data);
 }

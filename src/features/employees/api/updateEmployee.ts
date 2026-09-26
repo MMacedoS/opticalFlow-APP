@@ -22,6 +22,6 @@ export function UpdateEmployee(
     return Promise.reject(new Error("ID do funcionario não fornecido."));
   }
   return httpClient
-    .put<EmployeeResponse>(`/employees/${id}`, payload)
+    .put<EmployeeResponse>(`/funcionario/${id}`, payload)
     .then((response) => response.data);
 }

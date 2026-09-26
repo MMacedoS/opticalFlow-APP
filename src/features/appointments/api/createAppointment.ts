@@ -10,7 +10,7 @@ export async function CreateAppointment(
   const cleanedPayload = { ...payload };
   delete cleanedPayload.temResponsavel;
   const response = await httpClient.post<AppointmentResponse>(
-    "/appointments",
+    "/atendimento",
     cleanedPayload,
   );
   return response.data;

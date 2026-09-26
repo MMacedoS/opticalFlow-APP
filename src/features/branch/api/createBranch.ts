@@ -4,6 +4,6 @@ import type { BranchFormValues, BranchResponse } from "../types/branch.type";
 export async function createBranch(
   payload: BranchFormValues,
 ): Promise<BranchResponse> {
-  const response = await httpClient.post<BranchResponse>("/filiais", payload);
+  const response = await httpClient.post<BranchResponse>("/filial", payload);
   return response.data;
 }

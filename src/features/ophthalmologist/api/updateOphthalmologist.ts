@@ -22,6 +22,6 @@ export function UpdateOphthalmologist(
     return Promise.reject(new Error("ID do Oftalmologista não fornecido."));
   }
   return httpClient
-    .put<OphthalmologistResponse>(`/ophthalmologists/${id}`, payload)
+    .put<OphthalmologistResponse>(`/oftalmologista/${id}`, payload)
     .then((response) => response.data);
 }

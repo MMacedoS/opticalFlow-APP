@@ -8,7 +8,7 @@ export async function getOptometristList(
   payload: OptometristRequest,
 ): Promise<OptometristResponse> {
   const response = await httpClient.get<OptometristResponse>(
-    "/optometrists/list",
+    "/optometrista/list",
     {
       params: payload,
     },

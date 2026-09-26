@@ -7,7 +7,7 @@ import type {
 export async function getEmployeeList(
   payload: EmployeeRequest,
 ): Promise<EmployeeResponse> {
-  const response = await httpClient.get<EmployeeResponse>("/employees", {
+  const response = await httpClient.get<EmployeeResponse>("/funcionario", {
     params: payload,
   });
 

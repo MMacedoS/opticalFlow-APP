@@ -7,6 +7,6 @@ import type {
 export async function createCompany(
   payload: CompanyFormValues,
 ): Promise<CompanyResponse> {
-  const response = await httpClient.post<CompanyResponse>("/empresas", payload);
+  const response = await httpClient.post<CompanyResponse>("/empresa", payload);
   return response.data;
 }

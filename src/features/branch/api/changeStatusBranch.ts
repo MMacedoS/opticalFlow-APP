@@ -5,7 +5,7 @@ export async function changeStatusBranch(
   newStatus: "ativo" | "inativo",
 ): Promise<void> {
   try {
-    await httpClient.patch(`/filiais/${branchId}/status`, {
+    await httpClient.patch(`/filial/${branchId}/status`, {
       status: newStatus,
     });
   } catch (error) {

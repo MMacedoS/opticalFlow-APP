@@ -6,7 +6,7 @@ export async function CreateSchedule(
   payload: ScheduleFormValues,
 ): Promise<ScheduleListResponse> {
   const response = await httpClient.post<ScheduleListResponse>(
-    "/schedules",
+    "/agenda",
     payload,
   );
   return response.data;

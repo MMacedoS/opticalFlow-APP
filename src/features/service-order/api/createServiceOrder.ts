@@ -9,7 +9,7 @@ export async function createServiceOrder(
   payload: ServiceOrderCreatePayload,
 ): Promise<ServiceOrderDetailsResponse> {
   const response = await httpClient.post<ServiceOrderDetailsResponse>(
-    "/service-orders",
+    "/ordem-servico",
     payload,
   );
 

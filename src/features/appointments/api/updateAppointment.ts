@@ -22,6 +22,6 @@ export function UpdateAppointment(
     return Promise.reject(new Error("ID da atendimento não fornecido."));
   }
   return httpClient
-    .put<AppointmentResponse>(`/Appointments/${id}`, payload)
+    .put<AppointmentResponse>(`/atendimento/${id}`, payload)
     .then((response) => response.data);
 }

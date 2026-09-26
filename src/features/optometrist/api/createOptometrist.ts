@@ -8,7 +8,7 @@ export async function CreateOptometrist(
   payload: OptometristFormValues,
 ): Promise<OptometristResponse> {
   const response = await httpClient.post<OptometristResponse>(
-    "/optometrists",
+    "/optometrista",
     payload,
   );
   return response.data;

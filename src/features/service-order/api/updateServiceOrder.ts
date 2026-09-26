@@ -10,7 +10,7 @@ export async function updateServiceOrder(
   payload: ServiceOrderUpdatePayload,
 ): Promise<ServiceOrderDetailsResponse> {
   const response = await httpClient.put<ServiceOrderDetailsResponse>(
-    `/service-orders/${id}`,
+    `/ordem-servico/${id}`,
     payload,
   );
 

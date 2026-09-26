@@ -7,7 +7,7 @@ import type {
 export async function getAgreementsList(
   payload: AgreementRequest,
 ): Promise<AgreementResponse> {
-  const response = await httpClient.get<AgreementResponse>("/agreements/all", {
+  const response = await httpClient.get<AgreementResponse>("/convenio/all", {
     params: payload,
   });
 

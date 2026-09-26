@@ -5,7 +5,7 @@ export async function ChangeStatusOphthalmologist(
   newStatus: "ativo" | "inativo",
 ): Promise<void> {
   try {
-    await httpClient.patch(`/ophthalmologists/${ophthalmologistId}/status`, {
+    await httpClient.patch(`/oftalmologista/${ophthalmologistId}/status`, {
       status: newStatus,
     });
   } catch (error) {

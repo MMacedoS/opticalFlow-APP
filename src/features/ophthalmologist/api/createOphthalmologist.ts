@@ -8,7 +8,7 @@ export async function CreateOphthalmologist(
   payload: OphthalmologistFormValues,
 ): Promise<OphthalmologistResponse> {
   const response = await httpClient.post<OphthalmologistResponse>(
-    "/ophthalmologists",
+    "/oftalmologista",
     payload,
   );
   return response.data;
