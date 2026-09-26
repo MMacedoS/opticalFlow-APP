@@ -1,7 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
-import { Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Save, Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 import {
@@ -22,6 +22,7 @@ type ListSectionProps = {
   items: ListItem[];
   isPending: boolean;
   onAdd: (payload: SectionPayload) => Promise<unknown>;
+  onUpdate: (itemId: string, payload: SectionPayload) => Promise<unknown>;
   onRemove: (itemId: string) => void;
 };
 
@@ -39,8 +40,11 @@ export function ListSection({
   items,
   isPending,
   onAdd,
+  onUpdate,
   onRemove,
 }: ListSectionProps) {
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const schema = useMemo(() => buildSchema(config.fields), [config.fields]);
   const emptyValues = useMemo(
     () => toFormValues(config.fields, null, config.defaults),
@@ -55,12 +59,32 @@ export function ListSection({
 
   const onSubmit = form.handleSubmit(async (values) => {
     try {
-      await onAdd(toPayload(config.fields, values));
-      form.reset(emptyValues);
+      const payload = toPayload(config.fields, values);
+
+      if (editingId) {
+        await onUpdate(editingId, payload);
+      } else {
+        await onAdd(payload);
+      }
+
+      cancelEdit();
     } catch {
       // O erro ja foi exibido pelo toast da mutation.
     }
   });
+
+  function startEdit(item: ListItem) {
+    setEditingId(item.id);
+    form.reset(toFormValues(config.fields, item, config.defaults));
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+    form.reset(emptyValues);
+  }
+
+  const itemLabel = config.itemTitle.toLowerCase();
 
   return (
     <div className="space-y-4">
@@ -78,7 +102,11 @@ export function ListSection({
           {items.map((item) => (
             <li
               key={item.id}
-              className="flex items-start justify-between gap-3 rounded-lg border bg-background p-3 text-sm"
+              className={`flex items-start justify-between gap-3 rounded-lg border bg-background p-3 text-sm ${
+                editingId === item.id
+                  ? "border-primary ring-1 ring-primary"
+                  : ""
+              }`}
             >
               <dl className="grid flex-1 gap-x-4 gap-y-1 sm:grid-cols-[auto_1fr]">
                 {config.fields.map((field) => (
@@ -90,29 +118,42 @@ export function ListSection({
                   </div>
                 ))}
               </dl>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                aria-label={`Remover ${config.itemTitle.toLowerCase()}`}
-                disabled={isPending}
-                onClick={() => onRemove(item.id)}
-              >
-                <Trash2 className="size-4" />
-              </Button>
+              <div className="flex gap-1">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  aria-label={`Editar ${itemLabel}`}
+                  disabled={isPending}
+                  onClick={() => startEdit(item)}
+                >
+                  <Pencil className="size-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  aria-label={`Remover ${itemLabel}`}
+                  disabled={isPending || editingId === item.id}
+                  onClick={() => onRemove(item.id)}
+                >
+                  <Trash2 className="size-4" />
+                </Button>
+              </div>
             </li>
           ))}
         </ul>
       )}
 
       <form
+        ref={formRef}
         id={formId}
         onSubmit={onSubmit}
         noValidate
         className="space-y-3 rounded-lg bg-muted/40 p-3"
       >
         <p className="text-sm font-medium">
-          Adicionar {config.itemTitle.toLowerCase()}
+          {editingId ? `Editar ${itemLabel}` : `Adicionar ${itemLabel}`}
         </p>
         <div className="grid gap-3 md:grid-cols-3">
           {config.fields.map((field) => (
@@ -127,10 +168,24 @@ export function ListSection({
             />
           ))}
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          {editingId && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={cancelEdit}
+            >
+              Cancelar edição
+            </Button>
+          )}
           <Button type="submit" size="sm" disabled={isPending}>
-            <Plus className="mr-2 size-4" />
-            Adicionar
+            {editingId ? (
+              <Save className="mr-2 size-4" />
+            ) : (
+              <Plus className="mr-2 size-4" />
+            )}
+            {editingId ? "Salvar" : "Adicionar"}
           </Button>
         </div>
       </form>

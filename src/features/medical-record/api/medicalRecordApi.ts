@@ -88,6 +88,19 @@ export async function addListItem(
   return response.data;
 }
 
+export async function updateListItem(
+  id: string,
+  section: ListSectionKey,
+  itemId: string,
+  payload: SectionPayload,
+): Promise<ApiResponse<unknown>> {
+  const response = await httpClient.put<ApiResponse<unknown>>(
+    `${BASE}/${id}/${toPath(section)}/${itemId}`,
+    payload,
+  );
+  return response.data;
+}
+
 export async function removeListItem(
   id: string,
   section: ListSectionKey,

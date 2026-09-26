@@ -12,6 +12,7 @@ import {
   removeListItem,
   removeSection,
   saveSection,
+  updateListItem,
   updateClinicalSummary,
 } from "../api/medicalRecordApi";
 import type {
@@ -109,11 +110,24 @@ export function useMedicalRecordActions(
     }) => addListItem(prontuarioId, section, payload),
   );
 
+  const updateItem = useRecordMutation(
+    atendimentoId,
+    ({
+      section,
+      itemId,
+      payload,
+    }: {
+      section: ListSectionKey;
+      itemId: string;
+      payload: SectionPayload;
+    }) => updateListItem(prontuarioId, section, itemId, payload),
+  );
+
   const removeItem = useRecordMutation(
     atendimentoId,
     ({ section, itemId }: { section: ListSectionKey; itemId: string }) =>
       removeListItem(prontuarioId, section, itemId),
   );
 
-  return { updateSummary, save, clear, addItem, removeItem };
+  return { updateSummary, save, clear, addItem, updateItem, removeItem };
 }

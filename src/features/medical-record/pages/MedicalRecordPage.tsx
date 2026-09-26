@@ -81,10 +81,19 @@ function MedicalRecordEditor({ record }: { record: MedicalRecord }) {
                 config={section}
                 items={record[section.key]}
                 isPending={
-                  actions.addItem.isPending || actions.removeItem.isPending
+                  actions.addItem.isPending ||
+                  actions.updateItem.isPending ||
+                  actions.removeItem.isPending
                 }
                 onAdd={(payload) =>
                   actions.addItem.mutateAsync({ section: section.key, payload })
+                }
+                onUpdate={(itemId, payload) =>
+                  actions.updateItem.mutateAsync({
+                    section: section.key,
+                    itemId,
+                    payload,
+                  })
                 }
                 onRemove={(itemId) =>
                   actions.removeItem.mutate({ section: section.key, itemId })
