@@ -8,8 +8,11 @@ import {
   deletePrescription,
   getPrescription,
   getPrescriptionsByMedicalRecord,
+  updatePrescription,
 } from "../api/prescriptionApi";
 import type { PrescriptionPayload } from "../types/prescription.type";
+
+type UpdatePayload = Omit<PrescriptionPayload, "prontuarioId" | "tipo">;
 
 const LIST_KEY = "prescriptionsByMedicalRecord";
 
@@ -38,6 +41,7 @@ function usePrescriptionMutation<TVariables>(
     onSuccess: (data) => {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: [LIST_KEY, prontuarioId] });
+      queryClient.invalidateQueries({ queryKey: ["prescription"] });
     },
     onError: (error) => {
       toast.error(getApiErrorMessage(error));
@@ -54,5 +58,13 @@ export function useCreatePrescription(prontuarioId: string) {
 export function useDeletePrescription(prontuarioId: string) {
   return usePrescriptionMutation(prontuarioId, (id: string) =>
     deletePrescription(id),
+  );
+}
+
+export function useUpdatePrescription(prontuarioId: string) {
+  return usePrescriptionMutation(
+    prontuarioId,
+    ({ id, payload }: { id: string; payload: UpdatePayload }) =>
+      updatePrescription(id, payload),
   );
 }

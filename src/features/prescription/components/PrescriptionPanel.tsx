@@ -88,6 +88,11 @@ export function PrescriptionPanel({
                 <Printer className="mr-2 size-4" />
                 Imprimir
               </Link>
+              <PrescriptionForm
+                prontuarioId={prontuarioId}
+                refraction={refraction}
+                prescription={prescription}
+              />
               <Button
                 variant="ghost"
                 size="sm"

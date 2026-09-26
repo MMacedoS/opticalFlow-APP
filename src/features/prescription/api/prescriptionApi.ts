@@ -43,3 +43,14 @@ export async function deletePrescription(
   const response = await httpClient.delete<ApiResponse<null>>(`${BASE}/${id}`);
   return response.data;
 }
+
+export async function updatePrescription(
+  id: string,
+  payload: Omit<PrescriptionPayload, "prontuarioId" | "tipo">,
+): Promise<ApiResponse<Prescription>> {
+  const response = await httpClient.put<ApiResponse<Prescription>>(
+    `${BASE}/${id}`,
+    payload,
+  );
+  return response.data;
+}
