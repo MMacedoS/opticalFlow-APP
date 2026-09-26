@@ -14,7 +14,7 @@ export const statusColorEvents: Record<StatusEventos, string> = {
 export const statusColorMap: Record<StatusAtendimento, string> = {
   em_espera: "text-green-500",
   em_andamento: "text-blue-500",
-  finalizado: "text-slate-500",
+  concluido: "text-slate-500",
   cancelado: "text-red-500",
 };
 
@@ -28,7 +28,7 @@ export const statusLabelMap: Record<string, string> = {
 export type StatusAtendimento =
   | "em_espera"
   | "em_andamento"
-  | "finalizado"
+  | "concluido"
   | "cancelado";
 
 export const STATUS_ATENDIMENTO_OPTIONS: Record<
@@ -37,8 +37,26 @@ export const STATUS_ATENDIMENTO_OPTIONS: Record<
 > = {
   em_espera: { label: "Em espera", value: "em_espera" },
   em_andamento: { label: "Em andamento", value: "em_andamento" },
-  finalizado: { label: "Finalizado", value: "finalizado" },
+  concluido: { label: "Concluido", value: "concluido" },
   cancelado: { label: "Cancelado", value: "cancelado" },
 };
 
 export type TipoProduto = "armacao" | "lente" | "acesssorio" | "servico";
+
+export type StatusOrder =
+  | "aberta"
+  | "orcamento"
+  | "faturada"
+  | "finalizada"
+  | "cancelada";
+
+export const STATUS_ORDER_OPTIONS: Record<
+  StatusOrder,
+  { label: string; value: StatusOrder }
+> = {
+  aberta: { label: "Aberta", value: "aberta" },
+  orcamento: { label: "Orçamento", value: "orcamento" },
+  faturada: { label: "Faturada", value: "faturada" },
+  finalizada: { label: "Finalizada", value: "finalizada" },
+  cancelada: { label: "Cancelada", value: "cancelada" },
+};

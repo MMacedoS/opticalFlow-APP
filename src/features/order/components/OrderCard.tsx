@@ -11,32 +11,24 @@ import {
 } from "@/app/layouts/components/ui/dropdown-menu";
 import { EllipsisVertical, Trash2 } from "lucide-react";
 import { AlertConfirm } from "@/components/alert/AlertConfirm";
-import type { Appointment } from "../types/appointment.type";
-import { useAppointmentDelete } from "../hooks/useAppointmentDelete";
-import { useAppointmentStatus } from "../hooks/useAppointmentStatus";
-import { AppointmentForm } from "./AppointmentForm";
 import {
   statusColorMap,
   statusLabelMap,
   type StatusAtendimento,
 } from "@/constants/statusColorEvents";
 import dayjs from "dayjs";
+import type { Order } from "../types/Order.type";
 
-export function AppointmentCard(data: Appointment) {
+export function OrderCard(data: Order) {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [textAlert, setTextAlert] = useState("");
   const [descriptionAlert, setDescriptionAlert] = useState("");
 
   const [actionConfirm, setActionConfirm] = useState<() => void>(() => {});
 
-  const deleteAppointment = useAppointmentDelete();
-
   const handleExcluir = () => {
-    deleteAppointment.mutate(data.id as string);
     setIsAlertOpen(false);
   };
-
-  const changeStatusApi = useAppointmentStatus();
 
   const handleChangeStatus = ({
     newStatus,
@@ -45,8 +37,8 @@ export function AppointmentCard(data: Appointment) {
     newStatus: StatusAtendimento;
     id: string;
   }) => {
-    changeStatusApi.mutate({ id, status: newStatus });
     setIsAlertOpen(false);
+    console.log("Change status to:", newStatus, "for order ID:", id);
   };
 
   const openAlertStandart = (
@@ -61,7 +53,7 @@ export function AppointmentCard(data: Appointment) {
   };
 
   const isOutdated =
-    dayjs().isAfter(dayjs(data.dataAtendimento)) &&
+    dayjs().isAfter(dayjs(data.data_entrega)) &&
     data.status !== "concluido" &&
     data.status !== "cancelado";
 
@@ -72,10 +64,8 @@ export function AppointmentCard(data: Appointment) {
       }`}
     >
       <CardList
-        title="Consulta"
-        description={
-          "Consulta agendada para o Dr. " + data.profissional?.username
-        }
+        title={data.numero}
+        description={"Ordem de servico. " + data.descricao}
         action={
           <>
             <DropdownMenu>
@@ -91,8 +81,8 @@ export function AppointmentCard(data: Appointment) {
                   <DropdownMenuItem
                     onClick={() =>
                       openAlertStandart(
-                        `Tem certeza de que deseja EXCLUIR o atendimento?`,
-                        `O atendimento "${data.paciente.nome}" será excluído permanentemente.`,
+                        `Tem certeza de que deseja EXCLUIR o ordem de serviço?`,
+                        `O ordem de serviço "${data.numero}" será excluído permanentemente.`,
                         () => handleExcluir(),
                       )
                     }
@@ -111,14 +101,12 @@ export function AppointmentCard(data: Appointment) {
             <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-2">
               <div>
                 <h4 className="text-sm font-semibold text-slate-900">
-                  {data.paciente?.nome ?? "Paciente não identificado"}
+                  {data.cliente?.pessoa?.nome ?? "Cliente não identificado"}
                 </h4>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Atendimento:{" "}
+                  Data:{" "}
                   <span className="font-medium text-slate-600">
-                    {dayjs(data.dataAtendimento).format(
-                      "DD/MM/YYYY [às] HH:mm",
-                    )}
+                    {dayjs(data.data_entrega).format("DD/MM/YYYY [às] HH:mm")}
                   </span>
                 </p>
               </div>
@@ -135,41 +123,6 @@ export function AppointmentCard(data: Appointment) {
                 </span>
               </div>
             </div>
-
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <div>
-                <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">
-                  Convênio
-                </span>
-                <span className="font-medium text-slate-800">
-                  {data.convenio?.nome ?? "Particular"}
-                </span>
-              </div>
-
-              {data.cliente && (
-                <div>
-                  <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">
-                    Responsável (Cliente)
-                  </span>
-                  <span className="font-medium text-slate-800 truncate block max-w-35.5">
-                    {data.cliente.pessoa?.nome ?? "Não informado"}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Detalhes Clínicos: Queixa Principal e Observações */}
-            <div className="flex flex-col gap-2 bg-slate-50 p-2 rounded-md border border-slate-100 mt-1">
-              <div>
-                <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">
-                  Queixa Principal
-                </span>
-                <p className="text-xs text-slate-600 font-medium mt-0.5 whitespace-pre-line">
-                  {data.queixa_principal?.trim() ||
-                    "Nenhuma queixa registrada."}
-                </p>
-              </div>
-            </div>
           </div>
         }
         footer={
@@ -183,7 +136,7 @@ export function AppointmentCard(data: Appointment) {
                     onClick={() =>
                       openAlertStandart(
                         "Deseja cancelar este atendimento?",
-                        `O horário agendado já passou. Deseja alterar o status de "${data.paciente.nome}" para Cancelado?`,
+                        `O horário agendado já passou. Deseja alterar o status de "${data.cliente?.pessoa?.nome}" para Cancelado?`,
                         () =>
                           handleChangeStatus({
                             newStatus: "cancelado",
@@ -215,7 +168,7 @@ export function AppointmentCard(data: Appointment) {
                   className: "bg-blue-600 hover:bg-blue-700 text-white",
                   nextStatus: "em_andamento",
                   alertTitle: "Deseja iniciar este atendimento?",
-                  alertDesc: `O atendimento de "${data.paciente.nome}" mudará para o status Em Andamento.`,
+                  alertDesc: `O atendimento de "${data.cliente?.pessoa?.nome}" mudará para o status Em Andamento.`,
                 },
                 em_andamento: {
                   label: "Finalizar",
@@ -223,7 +176,7 @@ export function AppointmentCard(data: Appointment) {
                   className: "bg-green-600 hover:bg-green-700 text-white",
                   nextStatus: "concluido",
                   alertTitle: "Deseja finalizar este atendimento?",
-                  alertDesc: `O atendimento de "${data.paciente.nome}" será concluído e encerrado.`,
+                  alertDesc: `O atendimento de "${data.cliente?.pessoa?.nome}" será concluído e encerrado.`,
                 },
                 concluido: null,
                 cancelado: null,
@@ -254,8 +207,6 @@ export function AppointmentCard(data: Appointment) {
                 </Button>
               );
             })()}
-
-            <AppointmentForm initialValues={data} onClose={() => {}} />
           </>
         }
         itemChildren={

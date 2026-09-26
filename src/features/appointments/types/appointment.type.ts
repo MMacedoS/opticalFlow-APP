@@ -23,10 +23,23 @@ export interface Appointment {
     nome: string;
   };
   dataAtendimento: string;
+  temResponsavel?: boolean;
   agenda?: Evento;
-  status: "em_espera" | "em_andamento" | "finalizado" | "cancelado";
+  status: "em_espera" | "em_andamento" | "concluido" | "cancelado";
   queixa_principal: string | null;
-  observacao: string | null;
+  observacoes: string | null;
+  ordemServico?: {
+    status: "aberta" | "orcamento" | "faturada" | "finalizada" | "cancelada";
+    descricao?: string | null;
+    valor_total: number;
+    itens: {
+      produtoId?: string | null;
+      descricao_servico?: string | null;
+      quantidade: number;
+      valor_unitario: number;
+      desconto: number;
+    }[];
+  };
 }
 
 export interface AppointmentFormValues {
@@ -37,11 +50,34 @@ export interface AppointmentFormValues {
   pacienteId: string;
   profissionalId: string;
   clienteId?: string;
+  temResponsavel?: boolean;
   convenioId?: string;
   dataAtendimento: string;
-  status: "em_espera" | "em_andamento" | "finalizado" | "cancelado";
+  status: "em_espera" | "em_andamento" | "concluido" | "cancelado";
   queixa_principal: string | null;
-  observacao: string | null;
+  observacoes: string | null;
+  ordemServico?: {
+    status: "aberta" | "orcamento" | "faturada" | "finalizada" | "cancelada";
+    descricao?: string | null;
+    valor_total: number;
+    itens: {
+      produtoId?: string | null;
+      descricao_servico?: string | null;
+      quantidade: number;
+      valor_unitario: number;
+      desconto: number;
+    }[];
+  };
+  paciente?: Pessoa;
+  profissional?: {
+    id: string;
+    username: string;
+  };
+  cliente?: Customer;
+  convenio?: {
+    id: string;
+    nome: string;
+  };
 }
 
 export interface AppointmentProps {

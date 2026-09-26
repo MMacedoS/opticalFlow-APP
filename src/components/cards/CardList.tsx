@@ -38,7 +38,9 @@ export function CardList({
         </CardHeader>
         <CardContent className="space-y-2">{content}</CardContent>
         <Separator className="my-2" />
-        <CardFooter className="flex justify-end gap-2">{footer}</CardFooter>
+        <CardFooter className="flex justify-end-safe gap-2">
+          {footer}
+        </CardFooter>
       </Card>
       {itemChildren}
     </>

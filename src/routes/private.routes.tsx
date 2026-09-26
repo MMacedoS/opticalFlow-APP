@@ -15,6 +15,7 @@ import { SchedulePage } from "@/features/schedule/pages/SchedulePage";
 import { PeoplePage } from "@/features/people";
 import { AppointmentPage } from "@/features/appointments";
 import { ProductPage } from "@/features/products";
+import { ServiceOrderPage } from "@/features/service-order";
 
 export const privateRoutes: RouteObject[] = [
   {
@@ -74,6 +75,10 @@ export const privateRoutes: RouteObject[] = [
           {
             path: "/produtos/*",
             element: <ProductPage />,
+          },
+          {
+            path: "/ordens-servico/*",
+            element: <ServiceOrderPage />,
           },
         ],
       },

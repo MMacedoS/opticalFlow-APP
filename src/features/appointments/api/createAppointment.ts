@@ -7,9 +7,11 @@ import type {
 export async function CreateAppointment(
   payload: AppointmentFormValues,
 ): Promise<AppointmentResponse> {
+  const cleanedPayload = { ...payload };
+  delete cleanedPayload.temResponsavel;
   const response = await httpClient.post<AppointmentResponse>(
     "/appointments",
-    payload,
+    cleanedPayload,
   );
   return response.data;
 }

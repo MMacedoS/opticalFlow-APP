@@ -2,21 +2,21 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
 import { z } from "zod";
-import type { AppointmentFormValues } from "../types/appointment.type";
-import { appointmentFormSchema } from "../schema/appointment.schema";
-import { useAppointmentCreate } from "./useAppointmentCreate";
-import { useAppointmentUpdate } from "./useAppointmentUpdate";
+import type { OrderFormValues } from "../types/Order.type";
+import { OrderFormSchema } from "../schema/Order.schema";
+import { useOrderCreate } from "./useOrderCreate";
+import { useOrderUpdate } from "./useOrderUpdate";
 
-type AppointmentInputType = z.input<typeof appointmentFormSchema>;
+type OrderInputType = z.input<typeof OrderFormSchema>;
 
-export function useAppointmentForm(
-  initialValues?: Partial<AppointmentFormValues>,
+export function useOrderForm(
+  initialValues?: Partial<OrderFormValues>,
   onSuccess?: () => void,
 ) {
-  const createMutation = useAppointmentCreate();
-  const updateMutation = useAppointmentUpdate();
+  const createMutation = useOrderCreate();
+  const updateMutation = useOrderUpdate();
 
-  const mergedValues = useMemo<AppointmentInputType | undefined>(() => {
+  const mergedValues = useMemo<OrderInputType | undefined>(() => {
     if (!initialValues) return undefined;
 
     return {
@@ -40,11 +40,11 @@ export function useAppointmentForm(
           ? initialValues.ordemServico.itens
           : [],
       },
-    } as AppointmentInputType;
+    } as OrderInputType;
   }, [initialValues]);
 
-  const form = useForm<AppointmentInputType>({
-    resolver: zodResolver(appointmentFormSchema),
+  const form = useForm<OrderInputType>({
+    resolver: zodResolver(OrderFormSchema),
     values: mergedValues,
   });
 
@@ -58,7 +58,7 @@ export function useAppointmentForm(
 
   const onSubmit = form.handleSubmit(async (values) => {
     try {
-      const formValues = values as unknown as AppointmentFormValues;
+      const formValues = values as unknown as OrderFormValues;
 
       if (initialValues?.id) {
         await updateMutation.mutateAsync({
@@ -77,7 +77,7 @@ export function useAppointmentForm(
   });
 
   return {
-    form: form as unknown as ReturnType<typeof useForm<AppointmentFormValues>>,
+    form: form as unknown as ReturnType<typeof useForm<OrderFormValues>>,
     onSubmit,
     isPending: createMutation.isPending || updateMutation.isPending,
     errorMessage,

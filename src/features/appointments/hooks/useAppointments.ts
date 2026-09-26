@@ -13,7 +13,7 @@ export function useAppointments(args?: AppointmentListFilters) {
   const queryParams = { ...DEFAULT_APPOINTMENT_LIST, ...args };
 
   return useQuery({
-    queryKey: ["AppointmentsList", queryParams],
+    queryKey: ["appointmentsList", queryParams],
     queryFn: () => getAppointments(queryParams),
   });
 }
