@@ -8,7 +8,7 @@ export async function getAppointmentsList(
   payload: AppointmentRequest,
 ): Promise<AppointmentResponse> {
   const response = await httpClient.get<AppointmentResponse>(
-    "/atendimento/all",
+    "/atendimento",
     {
       params: payload,
     },

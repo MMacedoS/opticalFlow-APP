@@ -28,6 +28,7 @@ export interface Appointment {
   status: "em_espera" | "em_andamento" | "concluido" | "cancelado";
   queixa_principal: string | null;
   observacoes: string | null;
+  prontuarioId?: string | null;
   ordemServico?: {
     status: "aberta" | "orcamento" | "faturada" | "finalizada" | "cancelada";
     descricao?: string | null;
