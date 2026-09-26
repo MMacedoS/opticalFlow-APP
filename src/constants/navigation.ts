@@ -25,6 +25,7 @@ import {
   FoldHorizontal,
   FlaskConical,
   Truck,
+  FileHeart,
 } from "lucide-react";
 
 export type NavigationItem = {
@@ -180,6 +181,15 @@ export const appNavigationItems: NavigationItem[] = [
     icon: Stethoscope,
     requiredPermission: {
       modulo: "atendimento",
+      acao: "listar",
+    },
+  },
+  {
+    label: "Prontuários",
+    href: "/prontuarios",
+    icon: FileHeart,
+    requiredPermission: {
+      modulo: "prontuario",
       acao: "listar",
     },
   },

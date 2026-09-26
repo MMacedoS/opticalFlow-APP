@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { CardList } from "@/components/cards/CardList";
-import { SquareCheck, Ban } from "lucide-react";
+import { SquareCheck, Ban, FileHeart } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -254,6 +255,16 @@ export function AppointmentCard(data: Appointment) {
                 </Button>
               );
             })()}
+
+            {data.status !== "cancelado" && (
+              <Link
+                to={`/prontuarios/atendimento/${data.id}`}
+                className={buttonVariants({ variant: "outline", size: "sm" })}
+              >
+                <FileHeart className="mr-2 h-4 w-4" />
+                Prontuário
+              </Link>
+            )}
 
             <AppointmentForm initialValues={data} onClose={() => {}} />
           </>

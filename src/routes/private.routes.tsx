@@ -79,6 +79,16 @@ const SupplierPage = lazy(() =>
     default: module.SupplierPage,
   })),
 );
+const MedicalRecordListPage = lazy(() =>
+  import("@/features/medical-record").then((module) => ({
+    default: module.MedicalRecordListPage,
+  })),
+);
+const MedicalRecordPage = lazy(() =>
+  import("@/features/medical-record").then((module) => ({
+    default: module.MedicalRecordPage,
+  })),
+);
 const ServiceOrderPage = lazy(() =>
   import("@/features/service-order").then((module) => ({
     default: module.ServiceOrderPage,
@@ -147,6 +157,14 @@ export const privateRoutes: RouteObject[] = [
           {
             path: "/ordens-servico/*",
             element: <ServiceOrderPage />,
+          },
+          {
+            path: "/prontuarios",
+            element: <MedicalRecordListPage />,
+          },
+          {
+            path: "/prontuarios/atendimento/:atendimentoId",
+            element: <MedicalRecordPage />,
           },
           {
             path: "/fornecedores/*",
