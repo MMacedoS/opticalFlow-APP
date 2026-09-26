@@ -11,13 +11,16 @@ export function useBranchForm(initialValues?: BranchFormValues) {
   const createMutation = useBranchCreate();
   const updateMutation = useBranchUpdate();
 
-  const form = useForm<z.infer<typeof branchSchema>>({
+  const form = useForm<
+    z.input<typeof branchSchema>,
+    unknown,
+    z.output<typeof branchSchema>
+  >({
     resolver: zodResolver(branchSchema),
     defaultValues: initialValues || {
       nome: "",
       cnpj: "",
       pessoa: {
-        id: "",
         nome: "",
         cpf: "",
         email: "",

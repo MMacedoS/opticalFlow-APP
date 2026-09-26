@@ -11,12 +11,15 @@ export function useCustomerForm(initialValues?: CustomerFormValues) {
   const createMutation = useCustomerCreate();
   const updateMutation = useCustomerUpdate();
 
-  const form = useForm<z.infer<typeof customerSchema>>({
+  const form = useForm<
+    z.input<typeof customerSchema>,
+    unknown,
+    z.output<typeof customerSchema>
+  >({
     resolver: zodResolver(customerSchema),
     defaultValues: initialValues || {
       status: "ativo",
       pessoa: {
-        id: "",
         nome: "",
         cpf: "",
         email: "",

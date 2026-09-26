@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { ProductFormValues } from "../types/product.type";
+import type { ProductFormInput } from "../schema/product.schema";
 import { UpdateProduct } from "../api/updateProduct";
 
 export function useProductUpdate() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: ProductFormValues) => UpdateProduct(payload),
+    mutationFn: (payload: ProductFormInput) => UpdateProduct(payload),
     onSuccess: (data) => {
       toast.success(data.message, {
         action: {

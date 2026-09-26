@@ -11,13 +11,16 @@ export function useEmployeeForm(initialValues?: EmployeeFormValues) {
   const createMutation = useEmployeeCreate();
   const updateMutation = useEmployeeUpdate();
 
-  const form = useForm<z.infer<typeof employeeSchema>>({
+  const form = useForm<
+    z.input<typeof employeeSchema>,
+    unknown,
+    z.output<typeof employeeSchema>
+  >({
     resolver: zodResolver(employeeSchema),
     defaultValues: initialValues || {
       status: "ativo",
       cargo: "",
       pessoa: {
-        id: "",
         nome: "",
         cpf: "",
         email: "",
