@@ -327,7 +327,12 @@ export function ProductForm({ initialValues }: ProductProps) {
             </div>
 
             <div className="mt-1">
-              {currentTipo && currentTipo !== "servico" && (
+              {isEditing && currentTipo && currentTipo !== "servico" && (
+                <p className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-muted-foreground">
+                  Saldo, mínimo e máximo são gerenciados na tela de Estoque.
+                </p>
+              )}
+              {!isEditing && currentTipo && currentTipo !== "servico" && (
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 p-3 bg-slate-50 border border-slate-200 rounded-lg animate-in fade-in duration-200 col-span-1 md:col-span-2">
                   {/* 8. CONTROLLER: quantidade_inicial */}
                   <Controller
@@ -339,7 +344,6 @@ export function ProductForm({ initialValues }: ProductProps) {
                         <Input
                           type="number"
                           placeholder="0"
-                          disabled={isEditing} // Trava o campo se for edição
                           value={field.value ?? 0}
                           onChange={(e) =>
                             field.onChange(e.target.valueAsNumber || 0)
