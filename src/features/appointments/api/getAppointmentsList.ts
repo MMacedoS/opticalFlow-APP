@@ -7,12 +7,9 @@ import type {
 export async function getAppointmentsList(
   payload: AppointmentRequest,
 ): Promise<AppointmentResponse> {
-  const response = await httpClient.get<AppointmentResponse>(
-    "/atendimento",
-    {
-      params: payload,
-    },
-  );
+  const response = await httpClient.get<AppointmentResponse>("/atendimento", {
+    params: payload,
+  });
 
   return response.data;
 }

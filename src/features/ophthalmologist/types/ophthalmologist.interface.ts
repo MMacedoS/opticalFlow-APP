@@ -15,6 +15,7 @@ export interface OphthalmologistFormValues {
 }
 
 export interface OphthalmologistRequest {
+  filialId?: string;
   search?: string;
   limit?: number;
   page?: number;

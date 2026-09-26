@@ -9,6 +9,7 @@ export interface Customer {
 }
 
 export interface CustomerRequest {
+  filialId?: string;
   search?: string;
   limit?: number;
   page?: number;

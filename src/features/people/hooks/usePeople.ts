@@ -7,7 +7,7 @@ const DEFAULT_PEOPLE_LIST = {
   page: 1,
 };
 
-export type peopleListFilters = typeof DEFAULT_PEOPLE_LIST;
+export type peopleListFilters = typeof DEFAULT_PEOPLE_LIST & { filialId?: string };
 
 export function usePeople(args?: peopleListFilters) {
   const queryParams = { ...DEFAULT_PEOPLE_LIST, ...args };

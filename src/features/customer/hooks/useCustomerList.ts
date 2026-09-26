@@ -7,7 +7,7 @@ const DEFAULT_CUSTOMER_LIST = {
   page: 1,
 };
 
-export type customerListFilters = typeof DEFAULT_CUSTOMER_LIST;
+export type customerListFilters = typeof DEFAULT_CUSTOMER_LIST & { filialId?: string };
 
 export function useCustomerList(args?: customerListFilters) {
   const queryParams = { ...DEFAULT_CUSTOMER_LIST, ...args };

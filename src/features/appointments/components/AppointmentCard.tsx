@@ -260,7 +260,9 @@ export function AppointmentCard(data: Appointment) {
               <Link
                 to={`/prontuarios/atendimento/${data.id}`}
                 className={buttonVariants({ variant: "outline", size: "sm" })}
-                title={data.prontuarioId ? "Ver prontuário" : "Abrir prontuário"}
+                title={
+                  data.prontuarioId ? "Ver prontuário" : "Abrir prontuário"
+                }
               >
                 <FileHeart className="mr-2 h-4 w-4" />
                 Prontuário

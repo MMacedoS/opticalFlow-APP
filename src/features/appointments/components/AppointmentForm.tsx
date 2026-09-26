@@ -31,6 +31,8 @@ import { useCustomerList } from "@/features/customer/hooks/useCustomerList";
 import { getProducts } from "@/features/products/api/getProduct";
 import type { Product } from "@/features/products/types/product.type";
 import type { AppointmentFormValues } from "../types/appointment.type";
+import { useAuthStore } from "@/stores/auth.store";
+import { useBranchList } from "@/features/branch/hooks/useBranchList";
 import { useAppointmentForm } from "../hooks/useAppointmentForm";
 import { useAppointmentDelete } from "../hooks/useAppointmentDelete";
 
@@ -66,16 +68,24 @@ export function AppointmentForm({
   const [descriptionAlert, setDescriptionAlert] = useState("");
   const [actionConfirm, setActionConfirm] = useState<() => void>(() => {});
 
+  const session = useAuthStore((state) => state.session);
+  const precisaEscolherFilial = !session?.usuario?.filialId;
+  const branches = useBranchList({ search: "", limit: 100, page: 1 });
+  const filialSelecionada =
+    useWatch({ control: form.control, name: "filialId" }) || undefined;
+
   const oftalmologistas = useOphthalmologistsList({
     search: searchOftalmo,
     page: 1,
     limit: 20,
+    filialId: filialSelecionada,
   });
 
   const optometristas = useOptometristsList({
     search: searchOptometro,
     page: 1,
     limit: 20,
+    filialId: filialSelecionada,
   });
 
   const pessoaId = form.watch("pacienteId");
@@ -119,12 +129,18 @@ export function AppointmentForm({
     });
   }, [itensOS, form]);
 
-  const peoples = usePeople({ search: searchTerm, limit: 20, page: 1 });
+  const peoples = usePeople({
+    search: searchTerm,
+    limit: 20,
+    page: 1,
+    filialId: filialSelecionada,
+  });
 
   const customers = useCustomerList({
     search: searchCustomer,
     limit: 20,
     page: 1,
+    filialId: filialSelecionada,
   });
 
   const loadOptions = async (inputValue: string): Promise<SelectOption[]> => {
@@ -264,6 +280,38 @@ export function AppointmentForm({
       >
         <form id="form-Appointment" onSubmit={onSubmit} noValidate>
           <FieldGroup>
+            {precisaEscolherFilial && (
+              <Controller
+                name="filialId"
+                control={form.control}
+                render={({ field }) => (
+                  <Field>
+                    <FieldLabel htmlFor="appointment-filial">Filial</FieldLabel>
+                    <select
+                      id="appointment-filial"
+                      value={field.value ?? ""}
+                      disabled={isEditing}
+                      onChange={(event) => {
+                        field.onChange(event.target.value);
+                        form.setValue("pacienteId", "");
+                        form.setValue("profissionalId", "");
+                        form.setValue("clienteId", "");
+                      }}
+                      className="rounded-xl border bg-background p-2 text-sm"
+                    >
+                      <option value="">
+                        Selecione a filial do atendimento
+                      </option>
+                      {branches.data?.data?.branches.map((branch) => (
+                        <option key={branch.id} value={branch.id}>
+                          {branch.nome}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+                )}
+              />
+            )}
             <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-2">
@@ -843,10 +891,6 @@ export function AppointmentForm({
               {errorMessage}
             </p>
           )}
-
-          <pre className="bg-slate-950 text-green-400 p-4 rounded-lg overflow-x-auto font-mono text-sm shadow-inner max-h-96">
-            {JSON.stringify(form.formState.errors, null, 2)}
-          </pre>
 
           <div className="flex justify-end gap-2 mt-6">
             <DialogClose

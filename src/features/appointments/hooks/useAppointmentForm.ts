@@ -21,6 +21,7 @@ export function useAppointmentForm(
 
     return {
       id: initialValues.id ?? "",
+      filialId: initialValues.filialId ?? "",
       profissionalId: initialValues.profissionalId ?? "",
       pacienteId: initialValues.pacienteId ?? "",
       dataAtendimento:

@@ -7,7 +7,7 @@ const DEFAULT_OPTOMETRIST_LIST = {
   page: 1,
 };
 
-export type OptometristListFilters = typeof DEFAULT_OPTOMETRIST_LIST;
+export type OptometristListFilters = typeof DEFAULT_OPTOMETRIST_LIST & { filialId?: string };
 
 export function useOptometristsList(args?: OptometristListFilters) {
   const queryParams = { ...DEFAULT_OPTOMETRIST_LIST, ...args };

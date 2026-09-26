@@ -12,6 +12,7 @@ export interface People {
 }
 
 export interface PeopleRequest {
+  filialId?: string;
   search?: string;
   limit?: number;
   page?: number;

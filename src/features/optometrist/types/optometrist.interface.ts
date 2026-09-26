@@ -15,6 +15,7 @@ export interface OptometristFormValues {
 }
 
 export interface OptometristRequest {
+  filialId?: string;
   search?: string;
   limit?: number;
   page?: number;

@@ -3,6 +3,9 @@ export interface AuthUser {
   email: string;
   username: string;
   pessoaId: string | null;
+  empresaId?: string | null;
+  filialId?: string | null;
+  superadmin?: boolean;
 }
 
 export interface AuthPermission {

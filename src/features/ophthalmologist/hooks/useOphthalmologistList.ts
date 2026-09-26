@@ -7,7 +7,7 @@ const DEFAULT_OPHTHALMOLOGIST_LIST = {
   page: 1,
 };
 
-export type ophthalmologistListFilters = typeof DEFAULT_OPHTHALMOLOGIST_LIST;
+export type ophthalmologistListFilters = typeof DEFAULT_OPHTHALMOLOGIST_LIST & { filialId?: string };
 
 export function useOphthalmologistsList(args?: ophthalmologistListFilters) {
   const queryParams = { ...DEFAULT_OPHTHALMOLOGIST_LIST, ...args };

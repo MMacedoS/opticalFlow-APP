@@ -21,6 +21,7 @@ export const ordemServicoAninhadaSchema = z.object({
 
 export const appointmentFormSchema = z.object({
   id: z.string().optional(),
+  filialId: z.string().optional(),
   profissionalId: z.string().min(1, "Selecione um profissional").optional(),
   pacienteId: z.string().min(1, "Selecione um paciente").optional(),
   dataAtendimento: z.string().min(1, "A data e hora são obrigatórias"),
