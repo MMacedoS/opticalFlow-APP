@@ -5,46 +5,79 @@ import { DashboardLayout } from "@/app/layouts/DashboardLayout";
 import { PrivateRouteGuard } from "@/app/router/RouteGuards";
 
 const DashboardPage = lazy(() =>
-  import("@/features/dashboard").then((module) => ({ default: module.DashboardPage })),
+  import("@/features/dashboard").then((module) => ({
+    default: module.DashboardPage,
+  })),
 );
 const CompanyPage = lazy(() =>
-  import("@/features/company").then((module) => ({ default: module.CompanyPage })),
+  import("@/features/company").then((module) => ({
+    default: module.CompanyPage,
+  })),
 );
 const UserPage = lazy(() =>
-  import("@/features/auth/user").then((module) => ({ default: module.UserPage })),
+  import("@/features/auth/user").then((module) => ({
+    default: module.UserPage,
+  })),
 );
 const BranchPage = lazy(() =>
-  import("@/features/branch").then((module) => ({ default: module.BranchPage })),
+  import("@/features/branch").then((module) => ({
+    default: module.BranchPage,
+  })),
 );
 const CustomerPage = lazy(() =>
-  import("@/features/customer").then((module) => ({ default: module.CustomerPage })),
+  import("@/features/customer").then((module) => ({
+    default: module.CustomerPage,
+  })),
 );
 const AgreementPage = lazy(() =>
-  import("@/features/agreement").then((module) => ({ default: module.AgreementPage })),
+  import("@/features/agreement").then((module) => ({
+    default: module.AgreementPage,
+  })),
 );
 const EmployeePage = lazy(() =>
-  import("@/features/employees/pages/EmployeePage").then((module) => ({ default: module.EmployeePage })),
+  import("@/features/employees/pages/EmployeePage").then((module) => ({
+    default: module.EmployeePage,
+  })),
 );
 const OphthalmologistPage = lazy(() =>
-  import("@/features/ophthalmologist/pages/OphthalmologistPage").then((module) => ({ default: module.OphthalmologistPage })),
+  import("@/features/ophthalmologist/pages/OphthalmologistPage").then(
+    (module) => ({ default: module.OphthalmologistPage }),
+  ),
 );
 const OptometristPage = lazy(() =>
-  import("@/features/optometrist/pages/OptometristPage").then((module) => ({ default: module.OptometristPage })),
+  import("@/features/optometrist/pages/OptometristPage").then((module) => ({
+    default: module.OptometristPage,
+  })),
 );
 const SchedulePage = lazy(() =>
-  import("@/features/schedule/pages/SchedulePage").then((module) => ({ default: module.SchedulePage })),
+  import("@/features/schedule/pages/SchedulePage").then((module) => ({
+    default: module.SchedulePage,
+  })),
 );
 const PeoplePage = lazy(() =>
-  import("@/features/people").then((module) => ({ default: module.PeoplePage })),
+  import("@/features/people").then((module) => ({
+    default: module.PeoplePage,
+  })),
 );
 const AppointmentPage = lazy(() =>
-  import("@/features/appointments").then((module) => ({ default: module.AppointmentPage })),
+  import("@/features/appointments").then((module) => ({
+    default: module.AppointmentPage,
+  })),
 );
 const ProductPage = lazy(() =>
-  import("@/features/products").then((module) => ({ default: module.ProductPage })),
+  import("@/features/products").then((module) => ({
+    default: module.ProductPage,
+  })),
+);
+const LaboratoryPage = lazy(() =>
+  import("@/features/laboratory").then((module) => ({
+    default: module.LaboratoryPage,
+  })),
 );
 const ServiceOrderPage = lazy(() =>
-  import("@/features/service-order").then((module) => ({ default: module.ServiceOrderPage })),
+  import("@/features/service-order").then((module) => ({
+    default: module.ServiceOrderPage,
+  })),
 );
 
 export const privateRoutes: RouteObject[] = [
@@ -109,6 +142,10 @@ export const privateRoutes: RouteObject[] = [
           {
             path: "/ordens-servico/*",
             element: <ServiceOrderPage />,
+          },
+          {
+            path: "/laboratorios/*",
+            element: <LaboratoryPage />,
           },
         ],
       },

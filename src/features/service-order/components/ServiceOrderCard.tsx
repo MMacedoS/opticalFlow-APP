@@ -1,6 +1,12 @@
 import { useState } from "react";
 import dayjs from "dayjs";
-import { Ban, CheckCheck, EllipsisVertical, ReceiptText, Trash2 } from "lucide-react";
+import {
+  Ban,
+  CheckCheck,
+  EllipsisVertical,
+  ReceiptText,
+  Trash2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CardList } from "@/components/cards/CardList";
 import { AlertConfirm } from "@/components/alert/AlertConfirm";
@@ -14,7 +20,10 @@ import {
 import { ServiceOrderForm } from "./ServiceOrderForm";
 import { useServiceOrderDelete } from "../hooks/useServiceOrderDelete";
 import { useServiceOrderStatus } from "../hooks/useServiceOrderStatus";
-import type { ServiceOrder, ServiceOrderStatus } from "../types/service-order.type";
+import type {
+  ServiceOrder,
+  ServiceOrderStatus,
+} from "../types/service-order.type";
 
 const STATUS_STYLES: Record<ServiceOrderStatus, string> = {
   aberta: "bg-blue-50 text-blue-700 border-blue-200",
@@ -43,7 +52,9 @@ function formatDate(date?: string | null) {
   if (!date) return "Não informada";
 
   const parsedDate = dayjs(date);
-  return parsedDate.isValid() ? parsedDate.format("DD/MM/YYYY HH:mm") : "Não informada";
+  return parsedDate.isValid()
+    ? parsedDate.format("DD/MM/YYYY HH:mm")
+    : "Não informada";
 }
 
 export function ServiceOrderCard(data: ServiceOrder) {
@@ -57,7 +68,8 @@ export function ServiceOrderCard(data: ServiceOrder) {
   const items = Array.isArray(data.itens) ? data.itens : [];
   const status = data.status ?? "aberta";
   const canDelete = items.length === 0;
-  const patientName = data.atendimento?.paciente?.nome ?? "Paciente não informado";
+  const patientName =
+    data.atendimento?.paciente?.nome ?? "Paciente não informado";
   const customerName = data.cliente?.pessoa?.nome ?? "Cliente não informado";
 
   const openAlertStandart = (

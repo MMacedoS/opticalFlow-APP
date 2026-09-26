@@ -23,6 +23,7 @@ import {
   ArrowLeftRight,
   UnfoldHorizontal,
   FoldHorizontal,
+  FlaskConical,
 } from "lucide-react";
 
 export type NavigationItem = {
@@ -183,6 +184,15 @@ export const appNavigationItems: NavigationItem[] = [
         icon: ClockArrowDown,
         requiredPermission: {
           modulo: "ordem-servico",
+          acao: "listar",
+        },
+      },
+      {
+        label: "Laboratórios",
+        href: "/laboratorios",
+        icon: FlaskConical,
+        requiredPermission: {
+          modulo: "laboratorio",
           acao: "listar",
         },
       },

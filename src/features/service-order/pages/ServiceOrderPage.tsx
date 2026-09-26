@@ -4,6 +4,7 @@ import { CardPage } from "@/components/cards/CardPage";
 import { PaginationIconsOnly } from "@/components/paginationOnly/PaginationIconsOnly";
 import { useCustomerList } from "@/features/customer/hooks/useCustomerList";
 import { useAppointmentsList } from "@/features/appointments/hooks/useAppointmentsList";
+import { useActiveLaboratoryOptions } from "@/features/laboratory/hooks/useLaboratories";
 import { ServiceOrderCard } from "../components/ServiceOrderCard";
 import { ServiceOrderForm } from "../components/ServiceOrderForm";
 import { useServiceOrders } from "../hooks/useServiceOrders";
@@ -62,8 +63,11 @@ function getAppointmentLabel(appointment: {
 export function ServiceOrderPage() {
   const [filters, setFilters] = useState<ServiceOrderFilters>(DEFAULT_FILTERS);
 
-  const { data, isLoading, isError } = useServiceOrders(normalizeFilters(filters));
+  const { data, isLoading, isError } = useServiceOrders(
+    normalizeFilters(filters),
+  );
   const customerList = useCustomerList({ page: 1, limit: 1000, search: "" });
+  const { options: laboratoryOptions } = useActiveLaboratoryOptions();
   const appointmentsList = useAppointmentsList({ limit: 1000, search: "" });
 
   const paginationData = data?.data?.pagination;
@@ -111,7 +115,8 @@ export function ServiceOrderPage() {
           onChange={(event) =>
             setFilters((prev) => ({
               ...prev,
-              status: (event.target.value || undefined) as ServiceOrderStatus | undefined,
+              status: (event.target.value || undefined) as
+                ServiceOrderStatus | undefined,
               page: 1,
             }))
           }
@@ -163,9 +168,7 @@ export function ServiceOrderPage() {
           ))}
         </select>
 
-        <input
-          type="text"
-          placeholder="Filtrar por ID do laboratório"
+        <select
           value={filters.laboratorioId || ""}
           onChange={(event) =>
             setFilters((prev) => ({
@@ -174,8 +177,15 @@ export function ServiceOrderPage() {
               page: 1,
             }))
           }
-          className="border p-2 rounded-lg text-sm w-full"
-        />
+          className="border p-2 rounded-lg text-sm w-full bg-background"
+        >
+          <option value="">Todos os laboratórios</option>
+          {laboratoryOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
 
         <input
           type="date"

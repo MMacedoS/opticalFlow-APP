@@ -4,9 +4,7 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  serviceOrderSchema,
-} from "../schema/serviceOrder.schema";
+import { serviceOrderSchema } from "../schema/serviceOrder.schema";
 import { getApiErrorMessage } from "../api/helpers";
 import { createServiceOrderItem } from "../api/createServiceOrderItem";
 import { deleteServiceOrderItem } from "../api/deleteServiceOrderItem";
@@ -113,11 +111,7 @@ export function useServiceOrderForm(
     };
   }, [initialValues]);
 
-  const form = useForm<
-    ServiceOrderFormInput,
-    unknown,
-    ServiceOrderFormOutput
-  >({
+  const form = useForm<ServiceOrderFormInput, unknown, ServiceOrderFormOutput>({
     resolver: zodResolver(serviceOrderSchema),
     defaultValues: DEFAULT_VALUES,
     values,
@@ -139,7 +133,8 @@ export function useServiceOrderForm(
     if (firstItemError?.descricao_servico?.message) {
       return firstItemError.descricao_servico.message;
     }
-    if (firstItemError?.quantidade?.message) return firstItemError.quantidade.message;
+    if (firstItemError?.quantidade?.message)
+      return firstItemError.quantidade.message;
     if (firstItemError?.valor_unitario?.message) {
       return firstItemError.valor_unitario.message;
     }
@@ -164,7 +159,9 @@ export function useServiceOrderForm(
             .map((item) => [item.id as string, item]),
         );
         const removedItems = initialItems.filter(
-          (item) => item.id && !values.itens.some((currentItem) => currentItem.id === item.id),
+          (item) =>
+            item.id &&
+            !values.itens.some((currentItem) => currentItem.id === item.id),
         );
 
         await Promise.all(
@@ -174,7 +171,9 @@ export function useServiceOrderForm(
         await Promise.all(
           values.itens.map(async (item) => {
             const payload = {
-              descricao_servico: normalizeOptionalString(item.descricao_servico),
+              descricao_servico: normalizeOptionalString(
+                item.descricao_servico,
+              ),
               quantidade: Number(item.quantidade),
               valor_unitario: Number(item.valor_unitario),
               desconto: Number(item.desconto || 0),

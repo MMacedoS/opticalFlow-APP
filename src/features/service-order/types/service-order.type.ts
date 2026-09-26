@@ -2,11 +2,7 @@ import type { Customer } from "@/features/customer/types/customer.type";
 import type { TipoProduto } from "@/constants/statusColorEvents";
 
 export type ServiceOrderStatus =
-  | "aberta"
-  | "orcamento"
-  | "faturada"
-  | "finalizada"
-  | "cancelada";
+  "aberta" | "orcamento" | "faturada" | "finalizada" | "cancelada";
 
 export interface ServiceOrderItemProduct {
   id: string;
@@ -79,9 +75,11 @@ export interface ServiceOrder {
     id: string;
     nome: string;
   } | null;
-  cliente: (Customer & {
-    numero_convenio?: string | null;
-  }) | null;
+  cliente:
+    | (Customer & {
+        numero_convenio?: string | null;
+      })
+    | null;
   atendimento: ServiceOrderAppointment | null;
   laboratorio: ServiceOrderLaboratory | null;
   itens: ServiceOrderItem[];
@@ -166,4 +164,7 @@ export type ServiceOrderCreatePayload = {
   itens?: ServiceOrderItemFormValues[];
 };
 
-export type ServiceOrderUpdatePayload = Omit<ServiceOrderCreatePayload, "itens">;
+export type ServiceOrderUpdatePayload = Omit<
+  ServiceOrderCreatePayload,
+  "itens"
+>;

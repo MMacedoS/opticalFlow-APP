@@ -8,9 +8,12 @@ import type {
 export async function getServiceOrders(
   payload: ServiceOrderFilters,
 ): Promise<ServiceOrdersResponse> {
-  const response = await httpClient.get<ServiceOrdersResponse>("/ordem-servico", {
-    params: payload,
-  });
+  const response = await httpClient.get<ServiceOrdersResponse>(
+    "/ordem-servico",
+    {
+      params: payload,
+    },
+  );
 
   return unwrapApiResponse(response.data);
 }

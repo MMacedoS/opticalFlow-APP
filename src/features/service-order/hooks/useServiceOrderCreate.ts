@@ -8,7 +8,8 @@ export function useServiceOrderCreate() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: ServiceOrderCreatePayload) => createServiceOrder(payload),
+    mutationFn: (payload: ServiceOrderCreatePayload) =>
+      createServiceOrder(payload),
     onSuccess: (data) => {
       toast.success(data.message, {
         action: {

@@ -15,6 +15,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { useCustomerList } from "@/features/customer/hooks/useCustomerList";
+import { useActiveLaboratoryOptions } from "@/features/laboratory/hooks/useLaboratories";
 import { useAppointmentsList } from "@/features/appointments/hooks/useAppointmentsList";
 import { useProductsList } from "@/features/products/hooks/useProductsList";
 import type { Product } from "@/features/products/types/product.type";
@@ -81,6 +82,7 @@ export function ServiceOrderForm({
     useServiceOrderForm(initialValues);
 
   const customerList = useCustomerList({ page: 1, limit: 1000, search: "" });
+  const { options: laboratoryOptions } = useActiveLaboratoryOptions();
   const appointmentsList = useAppointmentsList({ limit: 1000, search: "" });
   const productsList = useProductsList({ limit: 1000, search: "" });
 
@@ -143,7 +145,11 @@ export function ServiceOrderForm({
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>Número</FieldLabel>
-                    <Input {...field} value={field.value || ""} placeholder="Ex.: OS-0001" />
+                    <Input
+                      {...field}
+                      value={field.value || ""}
+                      placeholder="Ex.: OS-0001"
+                    />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -180,11 +186,26 @@ export function ServiceOrderForm({
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>Laboratório</FieldLabel>
-                    <Input
+                    <select
                       {...field}
                       value={field.value || ""}
-                      placeholder="Informe o ID do laboratório"
-                    />
+                      className="border rounded-xl p-2 text-sm bg-background"
+                    >
+                      <option value="">Sem laboratório</option>
+                      {field.value &&
+                        !laboratoryOptions.some(
+                          (option) => option.value === field.value,
+                        ) && (
+                          <option value={field.value}>
+                            Laboratório atual (inativo)
+                          </option>
+                        )}
+                      {laboratoryOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -229,11 +250,13 @@ export function ServiceOrderForm({
                       className="border rounded-xl p-2 text-sm bg-background"
                     >
                       <option value="">Sem atendimento vinculado</option>
-                      {appointmentsList.data?.data?.appointments.map((appointment) => (
-                        <option key={appointment.id} value={appointment.id}>
-                          {getAppointmentLabel(appointment)}
-                        </option>
-                      ))}
+                      {appointmentsList.data?.data?.appointments.map(
+                        (appointment) => (
+                          <option key={appointment.id} value={appointment.id}>
+                            {getAppointmentLabel(appointment)}
+                          </option>
+                        ),
+                      )}
                     </select>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
@@ -297,7 +320,9 @@ export function ServiceOrderForm({
                   value={field.value || ""}
                   placeholder="Descreva o serviço solicitado, observações ou contexto da ordem."
                 />
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -334,179 +359,188 @@ export function ServiceOrderForm({
             </div>
 
             {fields.map((field, index) => {
-                const selectedProductId = form.watch(`itens.${index}.produtoId`);
-                const selectedProduct = products.find(
-                  (product) => product.id === selectedProductId,
-                ) as Product | undefined;
+              const selectedProductId = form.watch(`itens.${index}.produtoId`);
+              const selectedProduct = products.find(
+                (product) => product.id === selectedProductId,
+              ) as Product | undefined;
 
-                return (
-                  <div
-                    key={field.id}
-                    className="rounded-2xl border border-border/70 p-4"
-                  >
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-                      <Controller
-                        name={`itens.${index}.produtoId`}
-                        control={form.control}
-                        render={({ field: itemField, fieldState }) => (
-                          <Field data-invalid={fieldState.invalid}>
-                            <FieldLabel>Produto</FieldLabel>
-                            <select
-                              {...itemField}
-                              value={itemField.value || ""}
-                              className="border rounded-xl p-2 text-sm bg-background"
-                              onChange={(event) => {
-                                const nextValue = event.target.value;
-                                itemField.onChange(nextValue);
+              return (
+                <div
+                  key={field.id}
+                  className="rounded-2xl border border-border/70 p-4"
+                >
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+                    <Controller
+                      name={`itens.${index}.produtoId`}
+                      control={form.control}
+                      render={({ field: itemField, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
+                          <FieldLabel>Produto</FieldLabel>
+                          <select
+                            {...itemField}
+                            value={itemField.value || ""}
+                            className="border rounded-xl p-2 text-sm bg-background"
+                            onChange={(event) => {
+                              const nextValue = event.target.value;
+                              itemField.onChange(nextValue);
 
-                                const selected = products.find(
-                                  (product) => product.id === nextValue,
+                              const selected = products.find(
+                                (product) => product.id === nextValue,
+                              );
+
+                              if (selected) {
+                                form.setValue(
+                                  `itens.${index}.descricao_servico`,
+                                  form.getValues(
+                                    `itens.${index}.descricao_servico`,
+                                  ) || selected.nome,
                                 );
 
-                                if (selected) {
+                                if (
+                                  !form.getValues(
+                                    `itens.${index}.valor_unitario`,
+                                  )
+                                ) {
                                   form.setValue(
-                                    `itens.${index}.descricao_servico`,
-                                    form.getValues(`itens.${index}.descricao_servico`) ||
-                                      selected.nome,
+                                    `itens.${index}.valor_unitario`,
+                                    selected.preco_venda,
                                   );
-
-                                  if (!form.getValues(`itens.${index}.valor_unitario`)) {
-                                    form.setValue(
-                                      `itens.${index}.valor_unitario`,
-                                      selected.preco_venda,
-                                    );
-                                  }
                                 }
-                              }}
-                            >
-                              <option value="">Serviço sem produto</option>
-                              {products.map((product) => (
-                                <option key={product.id} value={product.id}>
-                                  {product.nome}
-                                </option>
-                              ))}
-                            </select>
-                            {fieldState.invalid && (
-                              <FieldError errors={[fieldState.error]} />
-                            )}
-                          </Field>
-                        )}
-                      />
-
-                      <Controller
-                        name={`itens.${index}.descricao_servico`}
-                        control={form.control}
-                        render={({ field: itemField, fieldState }) => (
-                          <Field data-invalid={fieldState.invalid}>
-                            <FieldLabel>Descrição do serviço</FieldLabel>
-                            <Input
-                              {...itemField}
-                              value={itemField.value || ""}
-                              placeholder="Ex.: Ajuste, conserto, exame"
-                            />
-                            {fieldState.invalid && (
-                              <FieldError errors={[fieldState.error]} />
-                            )}
-                          </Field>
-                        )}
-                      />
-
-                      <Controller
-                        name={`itens.${index}.quantidade`}
-                        control={form.control}
-                        render={({ field: itemField, fieldState }) => (
-                          <Field data-invalid={fieldState.invalid}>
-                            <FieldLabel>Quantidade</FieldLabel>
-                            <Input
-                              type="number"
-                              min="0.000001"
-                              step="0.01"
-                              value={itemField.value}
-                              onChange={(event) =>
-                                itemField.onChange(Number(event.target.value))
                               }
-                            />
-                            {fieldState.invalid && (
-                              <FieldError errors={[fieldState.error]} />
-                            )}
-                          </Field>
-                        )}
-                      />
-
-                      <Controller
-                        name={`itens.${index}.valor_unitario`}
-                        control={form.control}
-                        render={({ field: itemField, fieldState }) => (
-                          <Field data-invalid={fieldState.invalid}>
-                            <FieldLabel>Valor unitário</FieldLabel>
-                            <Input
-                              type="number"
-                              min="0"
-                              step="0.01"
-                              value={itemField.value}
-                              onChange={(event) =>
-                                itemField.onChange(Number(event.target.value))
-                              }
-                            />
-                            {fieldState.invalid && (
-                              <FieldError errors={[fieldState.error]} />
-                            )}
-                          </Field>
-                        )}
-                      />
-
-                      <Controller
-                        name={`itens.${index}.desconto`}
-                        control={form.control}
-                        render={({ field: itemField, fieldState }) => (
-                          <Field data-invalid={fieldState.invalid}>
-                            <FieldLabel>Desconto</FieldLabel>
-                            <Input
-                              type="number"
-                              min="0"
-                              step="0.01"
-                              value={itemField.value}
-                              onChange={(event) =>
-                                itemField.onChange(Number(event.target.value))
-                              }
-                            />
-                            {fieldState.invalid && (
-                              <FieldError errors={[fieldState.error]} />
-                            )}
-                          </Field>
-                        )}
-                      />
-                    </div>
-
-                    <div className="mt-3 flex items-center justify-between gap-2">
-                      <p className="text-xs text-muted-foreground">
-                        Subtotal:{" "}
-                        <span className="font-medium text-foreground">
-                          {formatCurrency(
-                            Math.max(
-                              0,
-                              (Number(form.watch(`itens.${index}.quantidade`)) || 0) *
-                                (Number(form.watch(`itens.${index}.valor_unitario`)) || 0) -
-                                (Number(form.watch(`itens.${index}.desconto`)) || 0),
-                            ),
+                            }}
+                          >
+                            <option value="">Serviço sem produto</option>
+                            {products.map((product) => (
+                              <option key={product.id} value={product.id}>
+                                {product.nome}
+                              </option>
+                            ))}
+                          </select>
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
                           )}
-                        </span>
-                        {selectedProduct ? ` - ${selectedProduct.nome}` : ""}
-                      </p>
+                        </Field>
+                      )}
+                    />
 
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => remove(index)}
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Remover
-                      </Button>
-                    </div>
+                    <Controller
+                      name={`itens.${index}.descricao_servico`}
+                      control={form.control}
+                      render={({ field: itemField, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
+                          <FieldLabel>Descrição do serviço</FieldLabel>
+                          <Input
+                            {...itemField}
+                            value={itemField.value || ""}
+                            placeholder="Ex.: Ajuste, conserto, exame"
+                          />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+
+                    <Controller
+                      name={`itens.${index}.quantidade`}
+                      control={form.control}
+                      render={({ field: itemField, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
+                          <FieldLabel>Quantidade</FieldLabel>
+                          <Input
+                            type="number"
+                            min="0.000001"
+                            step="0.01"
+                            value={itemField.value}
+                            onChange={(event) =>
+                              itemField.onChange(Number(event.target.value))
+                            }
+                          />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+
+                    <Controller
+                      name={`itens.${index}.valor_unitario`}
+                      control={form.control}
+                      render={({ field: itemField, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
+                          <FieldLabel>Valor unitário</FieldLabel>
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={itemField.value}
+                            onChange={(event) =>
+                              itemField.onChange(Number(event.target.value))
+                            }
+                          />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+
+                    <Controller
+                      name={`itens.${index}.desconto`}
+                      control={form.control}
+                      render={({ field: itemField, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
+                          <FieldLabel>Desconto</FieldLabel>
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={itemField.value}
+                            onChange={(event) =>
+                              itemField.onChange(Number(event.target.value))
+                            }
+                          />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
                   </div>
-                );
-              })}
+
+                  <div className="mt-3 flex items-center justify-between gap-2">
+                    <p className="text-xs text-muted-foreground">
+                      Subtotal:{" "}
+                      <span className="font-medium text-foreground">
+                        {formatCurrency(
+                          Math.max(
+                            0,
+                            (Number(form.watch(`itens.${index}.quantidade`)) ||
+                              0) *
+                              (Number(
+                                form.watch(`itens.${index}.valor_unitario`),
+                              ) || 0) -
+                              (Number(form.watch(`itens.${index}.desconto`)) ||
+                                0),
+                          ),
+                        )}
+                      </span>
+                      {selectedProduct ? ` - ${selectedProduct.nome}` : ""}
+                    </p>
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => remove(index)}
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Remover
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
 
             {!fields.length && (
               <p className="text-sm text-muted-foreground">
@@ -521,14 +555,17 @@ export function ServiceOrderForm({
             <div>
               <p className="text-sm font-medium">Total estimado</p>
               <p className="text-xs text-muted-foreground">
-                Calculado a partir da quantidade, valor unitário e desconto dos itens.
+                Calculado a partir da quantidade, valor unitário e desconto dos
+                itens.
               </p>
             </div>
             <p className="text-lg font-semibold">{formatCurrency(total)}</p>
           </div>
         </form>
 
-        {errorMessage && <p className="mt-3 text-sm text-destructive">{errorMessage}</p>}
+        {errorMessage && (
+          <p className="mt-3 text-sm text-destructive">{errorMessage}</p>
+        )}
 
         <div className="mt-4 flex justify-end gap-2">
           <DialogClose
