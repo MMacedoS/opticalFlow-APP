@@ -96,6 +96,11 @@ const PrescriptionPrintPage = lazy(() =>
     default: module.PrescriptionPrintPage,
   })),
 );
+const StockPage = lazy(() =>
+  import("@/features/stock").then((module) => ({
+    default: module.StockPage,
+  })),
+);
 const ServiceOrderPage = lazy(() =>
   import("@/features/service-order").then((module) => ({
     default: module.ServiceOrderPage,
@@ -180,6 +185,10 @@ export const privateRoutes: RouteObject[] = [
           {
             path: "/prontuarios/atendimento/:atendimentoId",
             element: <MedicalRecordPage />,
+          },
+          {
+            path: "/estoque",
+            element: <StockPage />,
           },
           {
             path: "/fornecedores/*",
