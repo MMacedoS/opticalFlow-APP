@@ -13,6 +13,8 @@ import {
 import { LIST_SECTIONS, SINGLE_SECTIONS } from "../schema/sections";
 import type { MedicalRecord } from "../types/medicalRecord.type";
 
+import { PrescriptionPanel } from "@/features/prescription";
+
 import { CardPage } from "@/components/cards/CardPage";
 import { PageLoading } from "@/components/loading/PageLoading";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -52,6 +54,7 @@ function MedicalRecordEditor({ record }: { record: MedicalRecord }) {
               )}
             </TabsTrigger>
           ))}
+          <TabsTrigger value="receitas">Receitas</TabsTrigger>
           <TabsTrigger value="resumo">
             Resumo
             <FilledDot filled={Boolean(record.resumo_clinico)} />
@@ -89,6 +92,12 @@ function MedicalRecordEditor({ record }: { record: MedicalRecord }) {
               />
             </TabsContent>
           ))}
+          <TabsContent value="receitas">
+            <PrescriptionPanel
+              prontuarioId={record.id}
+              refraction={record.refracao}
+            />
+          </TabsContent>
           <TabsContent value="resumo">
             <ClinicalSummaryForm
               value={record.resumo_clinico}

@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 
 import {
   buildSchema,
-  EYES,
   sectionFields,
   toFormValues,
   toPayload,
@@ -16,6 +15,7 @@ import type {
   SectionPayload,
   SectionRecord,
 } from "../types/medicalRecord.type";
+import { EyeGridFields } from "./EyeGridFields";
 import { SectionField } from "./SectionField";
 
 import { AlertConfirm } from "@/components/alert/AlertConfirm";
@@ -66,45 +66,11 @@ export function SingleSectionForm({
       </div>
 
       {config.eyeGrid && (
-        <div className="overflow-x-auto rounded-lg border">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/60">
-              <tr>
-                <th className="p-2 text-left font-medium">Olho</th>
-                {config.eyeGrid.columns.map((column) => (
-                  <th key={column.suffix} className="p-2 text-left font-medium">
-                    {column.label}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {EYES.map((eye) => (
-                <tr key={eye.prefix} className="border-t">
-                  <td className="p-2 font-medium whitespace-nowrap">
-                    {eye.label}
-                  </td>
-                  {config.eyeGrid!.columns.map((column) => (
-                    <td key={column.suffix} className="p-2">
-                      <SectionField
-                        field={{
-                          name: `${eye.prefix}_${column.suffix}`,
-                          label: `${eye.label} ${column.label}`,
-                          type: config.eyeGrid!.type,
-                          placeholder: column.placeholder,
-                        }}
-                        control={form.control}
-                        idPrefix={formId}
-                        hideLabel
-                        className="min-w-24"
-                      />
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <EyeGridFields
+          grid={config.eyeGrid}
+          control={form.control}
+          idPrefix={formId}
+        />
       )}
 
       <div className="grid gap-3 md:grid-cols-2">

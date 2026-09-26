@@ -1,8 +1,10 @@
-import { lazy } from "react";
+/* eslint-disable react-refresh/only-export-components -- arquivo de rotas: as páginas lazy não precisam de fast refresh aqui */
+import { lazy, Suspense } from "react";
 import type { RouteObject } from "react-router-dom";
 
 import { DashboardLayout } from "@/app/layouts/DashboardLayout";
 import { PrivateRouteGuard } from "@/app/router/RouteGuards";
+import { PageLoading } from "@/components/loading/PageLoading";
 
 const DashboardPage = lazy(() =>
   import("@/features/dashboard").then((module) => ({
@@ -89,6 +91,11 @@ const MedicalRecordPage = lazy(() =>
     default: module.MedicalRecordPage,
   })),
 );
+const PrescriptionPrintPage = lazy(() =>
+  import("@/features/prescription").then((module) => ({
+    default: module.PrescriptionPrintPage,
+  })),
+);
 const ServiceOrderPage = lazy(() =>
   import("@/features/service-order").then((module) => ({
     default: module.ServiceOrderPage,
@@ -99,6 +106,14 @@ export const privateRoutes: RouteObject[] = [
   {
     element: <PrivateRouteGuard />,
     children: [
+      {
+        path: "/receitas/:receitaId/imprimir",
+        element: (
+          <Suspense fallback={<PageLoading />}>
+            <PrescriptionPrintPage />
+          </Suspense>
+        ),
+      },
       {
         element: <DashboardLayout />,
         children: [

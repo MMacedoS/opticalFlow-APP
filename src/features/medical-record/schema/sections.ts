@@ -195,7 +195,10 @@ export const EYES = [
 ] as const;
 
 /** Lista plana de campos de uma secao, incluindo os da grade por olho. */
-export function sectionFields(config: SingleSectionConfig): FieldConfig[] {
+export function sectionFields(config: {
+  eyeGrid?: EyeGridConfig;
+  fields: FieldConfig[];
+}): FieldConfig[] {
   const gridFields: FieldConfig[] = config.eyeGrid
     ? EYES.flatMap((eye) =>
         config.eyeGrid!.columns.map((column) => ({
