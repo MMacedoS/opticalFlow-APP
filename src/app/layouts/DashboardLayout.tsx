@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 
 import {
@@ -7,6 +8,7 @@ import {
 import { AppFooter } from "./components/AppFooter";
 import { AppHeader } from "./components/AppHeader";
 import { AppSidebar } from "./components/AppSidebar";
+import { PageLoading } from "@/components/loading/PageLoading";
 import { Toaster } from "@/components/ui/sonner";
 
 export function DashboardLayout() {
@@ -17,7 +19,9 @@ export function DashboardLayout() {
         <div className="flex min-h-svh w-full flex-col gap-4 p-4 md:gap-6 md:p-6">
           <AppHeader />
           <section className="flex-1">
-            <Outlet />
+            <Suspense fallback={<PageLoading />}>
+              <Outlet />
+            </Suspense>
           </section>
           <Toaster richColors position="top-right" />
           <AppFooter />
