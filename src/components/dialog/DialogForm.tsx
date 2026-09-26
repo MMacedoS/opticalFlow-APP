@@ -8,6 +8,8 @@ type FormProps = {
   width?: string;
   variant?: "default" | "outline" | "ghost" | "link" | "destructive";
   icon?: LucideIcon;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 export function DialogForm({
@@ -16,10 +18,12 @@ export function DialogForm({
   variant = "default",
   width = "max-w-300!",
   icon: Icon = Pencil,
+  open,
+  onOpenChange,
 }: FormProps) {
   return (
     <>
-      <Dialog>
+      <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogTrigger
           className={buttonVariants({
             variant: variant,
