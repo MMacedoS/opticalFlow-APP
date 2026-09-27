@@ -270,10 +270,6 @@ export const appNavigationItems: NavigationItem[] = [
     label: "Relatórios",
     href: "#",
     icon: ClipboardMinus,
-    requiredPermission: {
-      modulo: "auditoria",
-      acao: "listar",
-    },
     children: [
       {
         label: "Vendas",

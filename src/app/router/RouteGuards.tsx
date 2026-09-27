@@ -10,9 +10,13 @@ export function PrivateRouteGuard() {
   const session = useAuthStore((state) => state.session);
   const isAuthenticated = Boolean(session?.accessToken);
 
-  const requiredPermission = appNavigationItems.find(
-    (item) => pathname === item.href || pathname.startsWith(`${item.href}/`),
-  )?.requiredPermission;
+  // Item de menu mais especifico (inclui submenus) que corresponde a rota.
+  const requiredPermission = appNavigationItems
+    .flatMap((item) => [item, ...(item.children ?? [])])
+    .filter(
+      (item) => pathname === item.href || pathname.startsWith(`${item.href}/`),
+    )
+    .sort((a, b) => b.href.length - a.href.length)[0]?.requiredPermission;
 
   if (!hasHydrated) {
     return null;

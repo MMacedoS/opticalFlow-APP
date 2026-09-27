@@ -1,8 +1,5 @@
 export type StatusEventos =
-  | "agendado"
-  | "confirmado"
-  | "finalizado"
-  | "cancelado";
+  "agendado" | "confirmado" | "finalizado" | "cancelado";
 
 export const statusColorEvents: Record<StatusEventos, string> = {
   agendado: "!bg-blue !border-blue-200 !text-white-700",
@@ -26,10 +23,7 @@ export const statusLabelMap: Record<string, string> = {
 };
 
 export type StatusAtendimento =
-  | "em_espera"
-  | "em_andamento"
-  | "concluido"
-  | "cancelado";
+  "em_espera" | "em_andamento" | "concluido" | "cancelado";
 
 export const STATUS_ATENDIMENTO_OPTIONS: Record<
   StatusAtendimento,
@@ -44,11 +38,7 @@ export const STATUS_ATENDIMENTO_OPTIONS: Record<
 export type TipoProduto = "armacao" | "lente" | "acesssorio" | "servico";
 
 export type StatusOrder =
-  | "aberta"
-  | "orcamento"
-  | "faturada"
-  | "finalizada"
-  | "cancelada";
+  "aberta" | "orcamento" | "faturada" | "finalizada" | "cancelada";
 
 export const STATUS_ORDER_OPTIONS: Record<
   StatusOrder,
