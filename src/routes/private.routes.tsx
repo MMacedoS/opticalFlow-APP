@@ -101,6 +101,11 @@ const StockPage = lazy(() =>
     default: module.StockPage,
   })),
 );
+const PurchasePage = lazy(() =>
+  import("@/features/purchase").then((module) => ({
+    default: module.PurchasePage,
+  })),
+);
 const ServiceOrderPage = lazy(() =>
   import("@/features/service-order").then((module) => ({
     default: module.ServiceOrderPage,
@@ -185,6 +190,10 @@ export const privateRoutes: RouteObject[] = [
           {
             path: "/prontuarios/atendimento/:atendimentoId",
             element: <MedicalRecordPage />,
+          },
+          {
+            path: "/compras",
+            element: <PurchasePage />,
           },
           {
             path: "/estoque",
