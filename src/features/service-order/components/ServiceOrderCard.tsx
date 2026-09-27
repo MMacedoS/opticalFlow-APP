@@ -207,6 +207,11 @@ export function ServiceOrderCard(data: ServiceOrder) {
               <p>Laboratório: {data.laboratorio?.nome ?? "Não vinculado"}</p>
               <p>Itens vinculados: {items.length}</p>
             </div>
+            {!canDelete && (
+              <p className="text-xs text-muted-foreground">
+                Possui itens vinculados e não pode ser excluída.
+              </p>
+            )}
           </div>
         }
         footer={
@@ -279,11 +284,6 @@ export function ServiceOrderCard(data: ServiceOrder) {
           />
         }
       />
-      {!canDelete && (
-        <p className="mt-2 text-xs text-muted-foreground">
-          Esta ordem possui itens vinculados e não pode ser excluída.
-        </p>
-      )}
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { Pencil, type LucideIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
-import { Button, buttonVariants } from "../ui/button";
+import { Button } from "../ui/button";
 
 type FormProps = {
   children: React.ReactNode;
@@ -24,13 +24,15 @@ export function DialogForm({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
+        {/* A variante vai no proprio Button: combinar classes de variantes
+            diferentes deixava o texto branco sobre fundo claro. */}
         <DialogTrigger
-          className={buttonVariants({
-            variant: variant,
-            size: "sm",
-          })}
           render={
-            <Button className="flex items-center gap-2">
+            <Button
+              variant={variant}
+              size="sm"
+              className="flex items-center gap-2"
+            >
               <Icon className="size-4" />
               <span>{title}</span>
             </Button>
