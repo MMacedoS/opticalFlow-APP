@@ -126,6 +126,11 @@ const AccessControlPage = lazy(() =>
     default: module.AccessControlPage,
   })),
 );
+const AuditPage = lazy(() =>
+  import("@/features/audit").then((module) => ({
+    default: module.AuditPage,
+  })),
+);
 const ServiceOrderPage = lazy(() =>
   import("@/features/service-order").then((module) => ({
     default: module.ServiceOrderPage,
@@ -230,6 +235,10 @@ export const privateRoutes: RouteObject[] = [
           {
             path: "/configuracoes/permissoes",
             element: <AccessControlPage />,
+          },
+          {
+            path: "/auditoria",
+            element: <AuditPage />,
           },
           {
             path: "/vendas",

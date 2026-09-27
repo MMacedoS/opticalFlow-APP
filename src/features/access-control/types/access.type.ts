@@ -55,6 +55,7 @@ export const MODULE_LABELS: Record<string, string> = {
   arquivo: "Arquivos",
   atendimento: "Consultas",
   auditoria: "Auditoria",
+  auth: "Login",
   cliente: "Clientes",
   compra: "Compras",
   convenio: "Convênios",
