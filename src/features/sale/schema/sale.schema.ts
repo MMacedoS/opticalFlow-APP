@@ -1,0 +1,64 @@
+import z from "zod/v4";
+
+const decimal = (label: string, min: number) =>
+  z
+    .string()
+    .trim()
+    .refine(
+      (value) => value !== "" && !Number.isNaN(Number(value.replace(",", "."))),
+      `${label} inválido`,
+    )
+    .transform((value) => Number(value.replace(",", ".")))
+    .refine((value) => value >= min, `${label} inválido`);
+
+const optionalDecimal = z
+  .string()
+  .trim()
+  .refine(
+    (value) => value === "" || !Number.isNaN(Number(value.replace(",", "."))),
+    "Desconto inválido",
+  )
+  .transform((value) => (value === "" ? 0 : Number(value.replace(",", "."))))
+  .refine((value) => value >= 0, "Desconto inválido");
+
+export const saleItemSchema = z
+  .object({
+    produtoId: z.string(),
+    descricao_servico: z.string().trim(),
+    quantidade: decimal("Quantidade", 0.001),
+    valor_unitario: decimal("Valor", 0),
+    desconto: optionalDecimal,
+  })
+  .refine((item) => item.produtoId !== "" || item.descricao_servico !== "", {
+    path: ["descricao_servico"],
+    message: "Escolha um produto ou descreva o serviço",
+  })
+  .refine((item) => item.desconto <= item.quantidade * item.valor_unitario, {
+    path: ["desconto"],
+    message: "Maior que o valor do item",
+  });
+
+export const saleSchema = z.object({
+  filialId: z.string(),
+  clienteId: z.string(),
+  dataVenda: z.string().min(1, "Informe a data"),
+  observacoes: z.string(),
+  itens: z
+    .array(saleItemSchema)
+    .min(1, "Inclua pelo menos um item")
+    .refine((itens) => {
+      const ids = itens.map((i) => i.produtoId).filter(Boolean);
+      return new Set(ids).size === ids.length;
+    }, "O mesmo produto aparece mais de uma vez"),
+});
+
+export type SaleFormInput = z.input<typeof saleSchema>;
+export type SaleFormOutput = z.output<typeof saleSchema>;
+
+export const EMPTY_ITEM = {
+  produtoId: "",
+  descricao_servico: "",
+  quantidade: "1",
+  valor_unitario: "",
+  desconto: "",
+};

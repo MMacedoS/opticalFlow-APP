@@ -5,6 +5,7 @@ import {
   CheckCheck,
   EllipsisVertical,
   ReceiptText,
+  ShoppingCart,
   Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/app/layouts/components/ui/dropdown-menu";
+import { useNavigate } from "react-router-dom";
+import { useCreateSaleFromServiceOrder } from "@/features/sale";
 import { ServiceOrderForm } from "./ServiceOrderForm";
 import { useServiceOrderDelete } from "../hooks/useServiceOrderDelete";
 import { useServiceOrderStatus } from "../hooks/useServiceOrderStatus";
@@ -67,6 +70,8 @@ export function ServiceOrderCard(data: ServiceOrder) {
 
   const items = Array.isArray(data.itens) ? data.itens : [];
   const status = data.status ?? "aberta";
+  const createSale = useCreateSaleFromServiceOrder();
+  const navigate = useNavigate();
   const canDelete = items.length === 0;
   const patientName =
     data.atendimento?.paciente?.nome ?? "Paciente não informado";
@@ -148,6 +153,21 @@ export function ServiceOrderCard(data: ServiceOrder) {
             />
             <DropdownMenuContent>
               <DropdownMenuGroup>
+                <DropdownMenuItem
+                  disabled={
+                    status === "cancelada" ||
+                    (data.itens?.length ?? 0) === 0 ||
+                    createSale.isPending
+                  }
+                  onClick={() =>
+                    createSale.mutate(data.id, {
+                      onSuccess: () => navigate("/vendas"),
+                    })
+                  }
+                >
+                  <ShoppingCart className="mr-2 h-4 w-4" />
+                  Gerar venda
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   disabled={!canDelete || deleteServiceOrder.isPending}
                   onClick={() =>
