@@ -17,6 +17,8 @@ export function useEmployeeUpdate() {
         },
       });
       queryClient.invalidateQueries({ queryKey: ["employeesList"] });
+      queryClient.invalidateQueries({ queryKey: ["accessUsers"] });
+      queryClient.invalidateQueries({ queryKey: ["accessProfiles"] });
     },
     onError: (error) => {
       toast.error(error.message, {

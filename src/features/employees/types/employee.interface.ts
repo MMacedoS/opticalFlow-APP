@@ -12,6 +12,7 @@ export interface EmployeeFormValues {
   cargo: string;
   pessoa: Pessoa;
   status: "ativo" | "inativo";
+  acessoIds?: string[];
 }
 
 export interface EmployeeRequest {

@@ -26,6 +26,7 @@ import { maskCPF } from "@/utils/masks";
 import { DialogClose } from "@/components/ui/dialog";
 import { useEmployeeForm } from "../hooks/useEmployeeForm";
 import type { EmployeeProps } from "../types/employee.interface";
+import { UserProfilesField } from "@/features/access-control/components/UserProfilesField";
 
 export function EmployeeForm({ initialValues }: EmployeeProps) {
   const { form, onSubmit, isPending, errorMessage } =
@@ -211,6 +212,18 @@ export function EmployeeForm({ initialValues }: EmployeeProps) {
                         />
                       </div>
                     </FieldGroup>
+                    <Separator className="my-4" />
+                    <Controller
+                      name="acessoIds"
+                      control={form.control}
+                      render={({ field }) => (
+                        <UserProfilesField
+                          usuarioId={initialValues?.pessoa?.usuario?.id}
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                      )}
+                    />
                     <Separator className="my-4" />
                     <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2">
                       <AddressForm

@@ -5,4 +5,5 @@ export const employeeSchema = z.object({
   status: z.enum(["ativo", "inativo"]).optional(),
   cargo: z.string().optional(),
   pessoa: personSchema,
+  acessoIds: z.array(z.string()).optional(),
 });
