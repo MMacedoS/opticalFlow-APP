@@ -61,13 +61,13 @@ export function useFinalizeSale() {
   return useSaleMutation(
     ({
       id,
-      pago,
-      vencimento,
+      ...payload
     }: {
       id: string;
       pago?: boolean;
       vencimento?: string;
-    }) => finalizeSale(id, { pago, vencimento }),
+      forma_pagamento?: string;
+    }) => finalizeSale(id, payload),
   );
 }
 

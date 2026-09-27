@@ -47,7 +47,7 @@ export async function updateSale(
 
 export async function finalizeSale(
   id: string,
-  payload: { pago?: boolean; vencimento?: string },
+  payload: { pago?: boolean; vencimento?: string; forma_pagamento?: string },
 ): Promise<ApiResponse<Sale>> {
   const response = await httpClient.post<ApiResponse<Sale>>(
     `${BASE}/${id}/finalizar`,

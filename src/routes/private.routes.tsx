@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components -- arquivo de rotas: as páginas lazy não precisam de fast refresh aqui */
 import { lazy, Suspense } from "react";
-import type { RouteObject } from "react-router-dom";
+import { Navigate, type RouteObject } from "react-router-dom";
 
 import { DashboardLayout } from "@/app/layouts/DashboardLayout";
 import { PrivateRouteGuard } from "@/app/router/RouteGuards";
@@ -111,6 +111,16 @@ const SalePage = lazy(() =>
     default: module.SalePage,
   })),
 );
+const PayablePage = lazy(() =>
+  import("@/features/financial").then((module) => ({
+    default: module.PayablePage,
+  })),
+);
+const ReceivablePage = lazy(() =>
+  import("@/features/financial").then((module) => ({
+    default: module.ReceivablePage,
+  })),
+);
 const ServiceOrderPage = lazy(() =>
   import("@/features/service-order").then((module) => ({
     default: module.ServiceOrderPage,
@@ -195,6 +205,18 @@ export const privateRoutes: RouteObject[] = [
           {
             path: "/prontuarios/atendimento/:atendimentoId",
             element: <MedicalRecordPage />,
+          },
+          {
+            path: "/financeiro",
+            element: <Navigate to="/financeiro/contas-receber" replace />,
+          },
+          {
+            path: "/financeiro/contas-pagar",
+            element: <PayablePage />,
+          },
+          {
+            path: "/financeiro/contas-receber",
+            element: <ReceivablePage />,
           },
           {
             path: "/vendas",
