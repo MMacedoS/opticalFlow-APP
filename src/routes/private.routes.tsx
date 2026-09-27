@@ -121,6 +121,11 @@ const ReceivablePage = lazy(() =>
     default: module.ReceivablePage,
   })),
 );
+const AccessControlPage = lazy(() =>
+  import("@/features/access-control").then((module) => ({
+    default: module.AccessControlPage,
+  })),
+);
 const ServiceOrderPage = lazy(() =>
   import("@/features/service-order").then((module) => ({
     default: module.ServiceOrderPage,
@@ -217,6 +222,14 @@ export const privateRoutes: RouteObject[] = [
           {
             path: "/financeiro/contas-receber",
             element: <ReceivablePage />,
+          },
+          {
+            path: "/configuracoes",
+            element: <Navigate to="/configuracoes/permissoes" replace />,
+          },
+          {
+            path: "/configuracoes/permissoes",
+            element: <AccessControlPage />,
           },
           {
             path: "/vendas",

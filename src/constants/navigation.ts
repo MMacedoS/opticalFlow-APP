@@ -26,6 +26,7 @@ import {
   FlaskConical,
   Truck,
   FileHeart,
+  ShieldCheck,
 } from "lucide-react";
 
 export type NavigationItem = {
@@ -366,6 +367,15 @@ export const appNavigationItems: NavigationItem[] = [
       acao: "listar",
     },
     children: [
+      {
+        label: "Permissões",
+        href: "/configuracoes/permissoes",
+        icon: ShieldCheck,
+        requiredPermission: {
+          modulo: "acesso",
+          acao: "listar",
+        },
+      },
       {
         label: "Usuários",
         href: "/usuarios",
