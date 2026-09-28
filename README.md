@@ -1,75 +1,46 @@
-# React + TypeScript + Vite
+# OpticaFlow Pro - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interface web do OpticaFlow Pro, sistema de gestao de oticas: cadastros,
+agenda, atendimentos e prontuarios, ordens de servico, estoque, compras,
+vendas, financeiro, relatorios e auditoria.
 
-Currently, two official plugins are available:
+## O que foi usado
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19 + TypeScript + Vite
+- React Router, TanStack Query e Zustand
+- React Hook Form + Zod
+- Tailwind CSS e componentes shadcn/ui
+- Axios
 
-## React Compiler
+## Rodando localmente
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+cp .env.example .env   # VITE_API_URL aponta para a API
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+O app sobe em `http://localhost:5173`. A API fica no repositorio
+[OpticaFlow-api](https://github.com/MMacedoS/OpticaFlow-api).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Scripts
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- `npm run dev`: servidor de desenvolvimento
+- `npm run build`: checagem de tipos e build de producao em `dist`
+- `npm run lint`: ESLint
+- `npm run preview`: serve o build localmente
 
-```
+## Deploy na Vercel
+
+1. Importe este repositorio na Vercel (o preset Vite e detectado sozinho).
+2. Defina `VITE_API_URL` com a URL da API no Render.
+3. Depois do primeiro deploy, adicione o dominio da Vercel na variavel
+   `FRONTEND_URL` da API, para liberar o CORS.
+
+O [vercel.json](vercel.json) redireciona todas as rotas para o `index.html`, para
+que recarregar uma pagina interna (ex.: `/ordens-servico`) nao de 404.
+
+## CI
+
+O workflow [.github/workflows/ci.yml](.github/workflows/ci.yml) roda lint e
+build a cada push na `main` e em pull requests.
