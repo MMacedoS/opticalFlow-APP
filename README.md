@@ -30,15 +30,14 @@ O app sobe em `http://localhost:5173`. A API fica no repositorio
 - `npm run lint`: ESLint
 - `npm run preview`: serve o build localmente
 
-## Deploy na Vercel
+## Deploy
 
-1. Importe este repositorio na Vercel (o preset Vite e detectado sozinho).
-2. Defina `VITE_API_URL` com a URL da API no Render.
-3. Depois do primeiro deploy, adicione o dominio da Vercel na variavel
-   `FRONTEND_URL` da API, para liberar o CORS.
-
-O [vercel.json](vercel.json) redireciona todas as rotas para o `index.html`, para
-que recarregar uma pagina interna (ex.: `/ordens-servico`) nao de 404.
+O frontend e publicado no Render como site estatico, junto com a API e o
+banco, pelo `render.yaml` do repositorio
+[OpticaFlow-api](https://github.com/MMacedoS/OpticaFlow-api) (veja a secao
+de deploy do README de la). O build usa `VITE_API_URL` com a URL publica da API
+e todas as rotas sao reescritas para o `index.html`, para que recarregar uma
+pagina interna (ex.: `/ordens-servico`) nao de 404.
 
 ## CI
 
