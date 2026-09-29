@@ -19,7 +19,12 @@ export const companySchema = z.object({
     }),
   registro_estadual: z.string().optional(),
   registro_municipal: z.string().optional(),
-  website: z.url("Informe uma URL válida").optional(),
+  website: z
+    .union([
+      z.literal("").transform(() => undefined),
+      z.url("Informe uma URL válida"),
+    ])
+    .optional(),
   enderecos: z.array(addressSchema).optional(),
   contatos: z.array(contactSchema).optional(),
 });

@@ -18,9 +18,10 @@ export function useCompanyForm(initialDate?: CompanyFormValues) {
       razao: "",
       cnpj: "",
       email: "",
-      registro_estadual: undefined,
-      registro_municipal: undefined,
-      website: undefined,
+      // Strings vazias (e nao undefined) para os campos limparem no reset.
+      registro_estadual: "",
+      registro_municipal: "",
+      website: "",
       enderecos: [],
       contatos: [],
     },
