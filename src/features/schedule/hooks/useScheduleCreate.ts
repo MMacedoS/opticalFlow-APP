@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/utils/apiError";
 import type { ScheduleFormValues } from "../schema/scheduleSchema";
 import { CreateSchedule } from "../api/createSchedule";
 
@@ -20,7 +21,7 @@ export function useScheduleCreate() {
       queryClient.invalidateQueries({ queryKey: ["schedulesList"] });
     },
     onError: (error) => {
-      toast.error(error.message, {
+      toast.error(getApiErrorMessage(error), {
         action: {
           label: "Fechar",
           onClick: () => {

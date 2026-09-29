@@ -69,7 +69,10 @@ export function useScheduleForm(
           ...formValues,
         });
       } else {
-        await createMutation.mutateAsync(formValues);
+        // Na criacao o formulario traz id vazio, que a API recusa.
+        const dadosNovoAgendamento = { ...formValues };
+        delete dadosNovoAgendamento.id;
+        await createMutation.mutateAsync(dadosNovoAgendamento);
         form.reset();
       }
 

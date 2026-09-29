@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/utils/apiError";
 import type { PeopleFormValues } from "../types/people.type";
 import { UpdatePeople } from "../api/updatePeople";
 
@@ -19,7 +20,7 @@ export function usePeopleUpdate() {
       queryClient.invalidateQueries({ queryKey: ["peoples"] });
     },
     onError: (error) => {
-      toast.error(error.message, {
+      toast.error(getApiErrorMessage(error), {
         action: {
           label: "Fechar",
           onClick: () => {

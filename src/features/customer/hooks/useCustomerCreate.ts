@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/utils/apiError";
 import { CreateCustomer } from "../api/createCustomer";
 import type { CustomerFormValues } from "../types/customer.type";
 
@@ -20,7 +21,7 @@ export function useCustomerCreate() {
       queryClient.invalidateQueries({ queryKey: ["customerList"] });
     },
     onError: (error) => {
-      toast.error(error.message, {
+      toast.error(getApiErrorMessage(error), {
         action: {
           label: "Fechar",
           onClick: () => {

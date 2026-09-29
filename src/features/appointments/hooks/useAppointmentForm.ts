@@ -26,8 +26,8 @@ export function useAppointmentForm(
       pacienteId: initialValues.pacienteId ?? "",
       dataAtendimento:
         initialValues.dataAtendimento ?? new Date().toISOString(),
-      status: initialValues.status ?? "agendado",
-      observacao: initialValues.observacoes ?? "",
+      status: initialValues.status ?? "em_espera",
+      observacoes: initialValues.observacoes ?? "",
       temResponsavel: initialValues.temResponsavel ?? false,
       clienteId: initialValues.clienteId ?? null,
       convenioId: initialValues.convenioId ?? null,

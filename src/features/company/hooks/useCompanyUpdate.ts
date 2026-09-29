@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { CompanyFormValues } from "../types/company.types";
 import { updateCompany } from "../api/updateCompany";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/utils/apiError";
 
 export function useCompanyUpdate() {
   const queryClient = useQueryClient();
@@ -17,7 +18,7 @@ export function useCompanyUpdate() {
       queryClient.invalidateQueries({ queryKey: ["companyList"] });
     },
     onError: (error) => {
-      toast.error(error.message, {
+      toast.error(getApiErrorMessage(error), {
         action: {
           label: "Fechar",
           onClick: () => console.log("fechado"),

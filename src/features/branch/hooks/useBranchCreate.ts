@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { BranchFormValues } from "../types/branch.type";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/utils/apiError";
 import { createBranch } from "../api/createBranch";
 
 export function useBranchCreate() {
@@ -20,7 +21,7 @@ export function useBranchCreate() {
       queryClient.invalidateQueries({ queryKey: ["branchList"] });
     },
     onError: (error) => {
-      toast.error(error.message, {
+      toast.error(getApiErrorMessage(error), {
         action: {
           label: "Fechar",
           onClick: () => {

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/utils/apiError";
 import { DeleteSchedule } from "../api/deleteSchedule";
 
 export function useScheduleDelete() {
@@ -13,7 +14,7 @@ export function useScheduleDelete() {
     },
     onError: (error) => {
       toast.error(
-        `Erro ao deletar o evento. Por favor, tente novamente. Error: ${error.message}`,
+        `Erro ao deletar o evento: ${getApiErrorMessage(error)}`,
       );
     },
   });

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/utils/apiError";
 import type { EmployeeFormValues } from "../types/employee.interface";
 import { CreateEmployee } from "../api/createEmployee";
 
@@ -22,7 +23,7 @@ export function useEmployeeCreate() {
       queryClient.invalidateQueries({ queryKey: ["accessProfiles"] });
     },
     onError: (error) => {
-      toast.error(error.message, {
+      toast.error(getApiErrorMessage(error), {
         action: {
           label: "Fechar",
           onClick: () => {

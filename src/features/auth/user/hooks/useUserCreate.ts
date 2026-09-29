@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/utils/apiError";
 import type { UserFormValues } from "../types/user.types";
 import { createUser } from "../api/createUser";
 
@@ -17,7 +18,7 @@ export function useUserCreate() {
       queryClient.invalidateQueries({ queryKey: ["userList"] });
     },
     onError: (error) => {
-      toast.error(error.message, {
+      toast.error(getApiErrorMessage(error), {
         action: {
           label: "Fechar",
           onClick: () => console.log("fechado"),

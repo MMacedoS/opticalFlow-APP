@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AgreementFormValues } from "../types/agreement.type";
 import { CreateAgreement } from "../api/createAgreement";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/utils/apiError";
 
 export function useAgreementCreate() {
   const queryClient = useQueryClient();
@@ -21,7 +22,7 @@ export function useAgreementCreate() {
       queryClient.invalidateQueries({ queryKey: ["agreementsList"] });
     },
     onError: (error) => {
-      toast.error(error.message, {
+      toast.error(getApiErrorMessage(error), {
         action: {
           label: "Fechar",
           onClick: () => {

@@ -9,6 +9,9 @@ export async function CreateAppointment(
 ): Promise<AppointmentResponse> {
   const cleanedPayload = { ...payload };
   delete cleanedPayload.temResponsavel;
+  // Campos vazios do formulario que a API recusa na criacao.
+  delete cleanedPayload.id;
+  if (!cleanedPayload.filialId) delete cleanedPayload.filialId;
   const response = await httpClient.post<AppointmentResponse>(
     "/atendimento",
     cleanedPayload,

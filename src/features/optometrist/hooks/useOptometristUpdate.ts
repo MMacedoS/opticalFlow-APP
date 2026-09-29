@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/utils/apiError";
 import type { OptometristFormValues } from "../types/optometrist.interface";
 import { UpdateOptometrist } from "../api/updateOptometrist";
 
@@ -19,7 +20,7 @@ export function useOptometristUpdate() {
       queryClient.invalidateQueries({ queryKey: ["optometristsList"] });
     },
     onError: (error) => {
-      toast.error(error.message, {
+      toast.error(getApiErrorMessage(error), {
         action: {
           label: "Fechar",
           onClick: () => {

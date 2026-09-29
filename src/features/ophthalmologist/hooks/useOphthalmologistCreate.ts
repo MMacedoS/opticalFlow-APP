@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/utils/apiError";
 import type { OphthalmologistFormValues } from "../types/ophthalmologist.interface";
 import { CreateOphthalmologist } from "../api/createOphthalmologist";
 
@@ -21,7 +22,7 @@ export function useOphthalmologistCreate() {
       queryClient.invalidateQueries({ queryKey: ["ophthalmologistsList"] });
     },
     onError: (error) => {
-      toast.error(error.message, {
+      toast.error(getApiErrorMessage(error), {
         action: {
           label: "Fechar",
           onClick: () => {
