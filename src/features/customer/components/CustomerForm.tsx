@@ -127,6 +127,10 @@ export function CustomerForm({ initialValues }: CustomerProps) {
                                 >
                                   <Calendar
                                     mode="single"
+                                    captionLayout="dropdown"
+                                    startMonth={new Date(1900, 0)}
+                                    endMonth={new Date()}
+                                    defaultMonth={field.value ?? new Date(1990, 0)}
                                     selected={field.value}
                                     onSelect={field.onChange}
                                     disabled={(date) =>
