@@ -1,4 +1,5 @@
-import { ArrowLeft, FilePlus2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowLeft, FilePlus2, Lock } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 
 import { ClinicalSummaryForm } from "../components/ClinicalSummaryForm";
@@ -19,6 +20,8 @@ import { CardPage } from "@/components/cards/CardPage";
 import { PageLoading } from "@/components/loading/PageLoading";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuthStore } from "@/stores/auth.store";
+import { httpClient } from "@/utils/axios";
 
 function FilledDot({ filled }: { filled: boolean }) {
   return filled ? (
@@ -29,12 +32,46 @@ function FilledDot({ filled }: { filled: boolean }) {
   ) : null;
 }
 
-function MedicalRecordEditor({ record }: { record: MedicalRecord }) {
+/** Prontuario e receitas so podem ser alterados pelo profissional do atendimento. */
+function useProfissionalDoAtendimento(atendimentoId: string) {
+  const usuarioId = useAuthStore((state) => state.session?.usuario?.id);
+  const { data } = useQuery({
+    queryKey: ["appointment", atendimentoId],
+    queryFn: async () => {
+      const response = await httpClient.get<{
+        data: { profissionalId: string };
+      }>(`/atendimento/${atendimentoId}`);
+      return response.data.data;
+    },
+    enabled: Boolean(atendimentoId),
+  });
+
+  return Boolean(usuarioId && data?.profissionalId === usuarioId);
+}
+
+function ReadOnlyNotice() {
+  return (
+    <p className="flex items-center gap-2 rounded-lg border border-dashed bg-muted/40 p-3 text-sm text-muted-foreground">
+      <Lock className="size-4 shrink-0" />
+      Somente leitura: apenas o profissional de saúde do atendimento pode
+      alterar o prontuário e emitir receitas.
+    </p>
+  );
+}
+
+function MedicalRecordEditor({
+  record,
+  canEdit,
+}: {
+  record: MedicalRecord;
+  canEdit: boolean;
+}) {
   const actions = useMedicalRecordActions(record.atendimentoId, record.id);
 
   return (
     <div className="space-y-4">
       <MedicalRecordHeader record={record} />
+      {!canEdit && <ReadOnlyNotice />}
 
       <Tabs defaultValue={SINGLE_SECTIONS[0].key}>
         <TabsList>
@@ -61,7 +98,11 @@ function MedicalRecordEditor({ record }: { record: MedicalRecord }) {
           </TabsTrigger>
         </TabsList>
 
-        <div className="rounded-xl border bg-background p-4">
+        {/* Desabilita campos e botoes; o link de impressao da receita segue ativo. */}
+        <fieldset
+          disabled={!canEdit}
+          className="min-w-0 rounded-xl border bg-background p-4"
+        >
           {SINGLE_SECTIONS.map((section) => (
             <TabsContent key={section.key} value={section.key}>
               <SingleSectionForm
@@ -114,7 +155,7 @@ function MedicalRecordEditor({ record }: { record: MedicalRecord }) {
               onSave={(value) => actions.updateSummary.mutateAsync(value)}
             />
           </TabsContent>
-        </div>
+        </fieldset>
       </Tabs>
     </div>
   );
@@ -125,6 +166,7 @@ export function MedicalRecordPage() {
   const { record, notOpened, isLoading, isError } =
     useMedicalRecordByAppointment(atendimentoId);
   const openRecord = useOpenMedicalRecord(atendimentoId);
+  const canEdit = useProfissionalDoAtendimento(atendimentoId);
 
   return (
     <CardPage
@@ -142,7 +184,16 @@ export function MedicalRecordPage() {
     >
       {isLoading && <PageLoading />}
 
-      {notOpened && (
+      {notOpened && !canEdit && (
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed p-8 text-center">
+          <p className="text-sm text-muted-foreground">
+            Este atendimento ainda não tem prontuário. Ele é aberto pelo
+            profissional de saúde do atendimento.
+          </p>
+        </div>
+      )}
+
+      {notOpened && canEdit && (
         <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed p-8 text-center">
           <p className="text-sm text-muted-foreground">
             Este atendimento ainda não tem prontuário.
@@ -163,7 +214,7 @@ export function MedicalRecordPage() {
         </p>
       )}
 
-      {record && <MedicalRecordEditor record={record} />}
+      {record && <MedicalRecordEditor record={record} canEdit={canEdit} />}
     </CardPage>
   );
 }
