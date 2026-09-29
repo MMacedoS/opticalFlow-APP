@@ -74,8 +74,9 @@ function buildUpdatePayload(
     numero: normalizeOptionalString(values.numero),
     status: values.status,
     descricao: normalizeOptionalString(values.descricao),
-    previsao_entrega: normalizeOptionalString(values.previsao_entrega),
-    data_entrega: normalizeOptionalString(values.data_entrega),
+    // Na edicao, campo de data vazio limpa a data gravada.
+    previsao_entrega: normalizeOptionalString(values.previsao_entrega) ?? null,
+    data_entrega: normalizeOptionalString(values.data_entrega) ?? null,
   };
 }
 

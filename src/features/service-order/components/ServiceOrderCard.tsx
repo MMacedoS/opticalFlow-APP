@@ -239,6 +239,21 @@ export function ServiceOrderCard(data: ServiceOrder) {
                 {primaryAction.label}
               </Button>
             )}
+            {status === "faturada" && items.length > 0 && (
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={createSale.isPending}
+                onClick={() =>
+                  createSale.mutate(data.id, {
+                    onSuccess: () => navigate("/vendas"),
+                  })
+                }
+              >
+                <ShoppingCart className="mr-2 h-4 w-4" />
+                Gerar venda
+              </Button>
+            )}
             {status !== "cancelada" && status !== "finalizada" && (
               <Button
                 size="sm"

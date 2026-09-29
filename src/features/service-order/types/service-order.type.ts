@@ -166,5 +166,9 @@ export type ServiceOrderCreatePayload = {
 
 export type ServiceOrderUpdatePayload = Omit<
   ServiceOrderCreatePayload,
-  "itens"
->;
+  "itens" | "previsao_entrega" | "data_entrega"
+> & {
+  /** null limpa a data. */
+  previsao_entrega?: string | null;
+  data_entrega?: string | null;
+};

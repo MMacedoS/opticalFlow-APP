@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { Controller, useFieldArray, useWatch } from "react-hook-form";
 import { ClipboardList, Pencil, Plus, Trash2 } from "lucide-react";
 import { DialogClose } from "@/components/ui/dialog";
@@ -108,19 +108,6 @@ export function ServiceOrderForm({
       }, 0),
     [items],
   );
-
-  useEffect(() => {
-    if (!fields.length) {
-      append({
-        id: undefined,
-        produtoId: "",
-        descricao_servico: "",
-        quantidade: 1,
-        valor_unitario: 0,
-        desconto: 0,
-      });
-    }
-  }, [append, fields.length]);
 
   const dialogTriggerLabel =
     triggerLabel || (isEditing ? "Editar Ordem" : "Nova Ordem de Serviço");
