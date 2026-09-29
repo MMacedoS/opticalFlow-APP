@@ -45,7 +45,7 @@ export function BranchForm({ initialValues }: BranchFormProps) {
         children={
           <>
             <CardPage
-              title={isEditing ? "Editar Filial" : "Cadastrar Empresa"}
+              title={isEditing ? "Editar Filial" : "Cadastrar Filial"}
               description={"Preencha os campos abaixo"}
               children={
                 <>
@@ -58,7 +58,7 @@ export function BranchForm({ initialValues }: BranchFormProps) {
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
                               <FieldLabel htmlFor="form-branch-nome">
-                                Empresa
+                                Nome da filial
                               </FieldLabel>
                               <Input {...field} placeholder="Nome da Filial" />
                               {fieldState.invalid && (
@@ -100,7 +100,7 @@ export function BranchForm({ initialValues }: BranchFormProps) {
                               </FieldLabel>
                               <Input
                                 {...field}
-                                placeholder="Nome completo do Responsável pela empresa"
+                                placeholder="Nome completo do responsável pela filial"
                               />
                               {fieldState.invalid && (
                                 <FieldError errors={[fieldState.error]} />

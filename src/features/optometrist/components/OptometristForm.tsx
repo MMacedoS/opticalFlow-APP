@@ -46,7 +46,7 @@ export function OptometristForm({ initialValues }: OptometristProps) {
           <>
             <CardPage
               title={
-                isEditing ? "Editar Oftalmologista" : "Cadastrar Oftalmologista"
+                isEditing ? "Editar Optometrista" : "Cadastrar Optometrista"
               }
               description={"Preencha os campos abaixo"}
               children={
@@ -75,7 +75,7 @@ export function OptometristForm({ initialValues }: OptometristProps) {
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
                               <FieldLabel htmlFor="form-Optometrist-cpf">
-                                CPF do Responsável
+                                CPF
                               </FieldLabel>
                               <Input
                                 {...field}
@@ -147,7 +147,7 @@ export function OptometristForm({ initialValues }: OptometristProps) {
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
                               <FieldLabel htmlFor="form-Optometrist-email">
-                                E-mail do Responsável
+                                E-mail
                               </FieldLabel>
                               <Input
                                 {...field}
@@ -166,11 +166,11 @@ export function OptometristForm({ initialValues }: OptometristProps) {
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
                               <FieldLabel htmlFor="form-Optometrist-cargo">
-                                Cargo
+                                Registro profissional
                               </FieldLabel>
                               <Input
                                 {...field}
-                                placeholder="registro_profissional"
+                                placeholder="Ex.: CBOO 12345"
                               />
                               {fieldState.invalid && (
                                 <FieldError errors={[fieldState.error]} />

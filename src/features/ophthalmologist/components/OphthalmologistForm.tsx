@@ -79,7 +79,7 @@ export function OphthalmologistForm({ initialValues }: OphthalmologistProps) {
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
                               <FieldLabel htmlFor="form-ophthalmologist-cpf">
-                                CPF do Responsável
+                                CPF
                               </FieldLabel>
                               <Input
                                 {...field}
@@ -151,7 +151,7 @@ export function OphthalmologistForm({ initialValues }: OphthalmologistProps) {
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
                               <FieldLabel htmlFor="form-ophthalmologist-email">
-                                E-mail do Responsável
+                                E-mail
                               </FieldLabel>
                               <Input
                                 {...field}
@@ -170,11 +170,11 @@ export function OphthalmologistForm({ initialValues }: OphthalmologistProps) {
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
                               <FieldLabel htmlFor="form-ophthalmologist-cargo">
-                                Cargo
+                                Registro profissional
                               </FieldLabel>
                               <Input
                                 {...field}
-                                placeholder="registro_profissional"
+                                placeholder="Ex.: CRM-SP 123456"
                               />
                               {fieldState.invalid && (
                                 <FieldError errors={[fieldState.error]} />

@@ -74,7 +74,7 @@ export function EmployeeForm({ initialValues }: EmployeeProps) {
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
                               <FieldLabel htmlFor="form-employee-cpf">
-                                CPF do Responsável
+                                CPF
                               </FieldLabel>
                               <Input
                                 {...field}
@@ -146,7 +146,7 @@ export function EmployeeForm({ initialValues }: EmployeeProps) {
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
                               <FieldLabel htmlFor="form-employee-email">
-                                E-mail do Responsável
+                                E-mail
                               </FieldLabel>
                               <Input
                                 {...field}

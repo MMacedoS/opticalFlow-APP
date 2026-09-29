@@ -38,7 +38,7 @@ export function AppointmentPage() {
           <div className="mb-2">
             <input
               type="text"
-              placeholder="Filtrar convênios..."
+              placeholder="Filtrar consultas..."
               value={filters.search}
               onChange={(e) =>
                 setFilters((prev) => ({

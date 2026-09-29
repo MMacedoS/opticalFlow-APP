@@ -40,7 +40,7 @@ export function UserForm({ initialValues }: UserFormProps) {
         children={
           <>
             <CardPage
-              title={isEditing ? "Editar Empresa" : "Cadastrar Empresa"}
+              title={isEditing ? "Editar Usuário" : "Cadastrar Usuário"}
               description={
                 isEditing
                   ? "Preencha os campos abaixo para editar a empresa."

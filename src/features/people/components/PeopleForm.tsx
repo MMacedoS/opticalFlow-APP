@@ -73,7 +73,7 @@ export function PeopleForm({ initialValues }: PeopleProps) {
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
                               <FieldLabel htmlFor="form-People-cpf">
-                                CPF do Responsável
+                                CPF
                               </FieldLabel>
                               <Input
                                 {...field}
@@ -145,7 +145,7 @@ export function PeopleForm({ initialValues }: PeopleProps) {
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
                               <FieldLabel htmlFor="form-People-email">
-                                E-mail do Responsável
+                                E-mail
                               </FieldLabel>
                               <Input
                                 {...field}

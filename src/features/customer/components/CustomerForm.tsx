@@ -48,7 +48,7 @@ export function CustomerForm({ initialValues }: CustomerProps) {
         children={
           <>
             <CardPage
-              title={isEditing ? "Editar Filial" : "Cadastrar Empresa"}
+              title={isEditing ? "Editar Cliente" : "Cadastrar Cliente"}
               description={"Preencha os campos abaixo"}
               children={
                 <>
@@ -76,7 +76,7 @@ export function CustomerForm({ initialValues }: CustomerProps) {
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
                               <FieldLabel htmlFor="form-customer-cpf">
-                                CPF do Responsável
+                                CPF
                               </FieldLabel>
                               <Input
                                 {...field}
@@ -148,7 +148,7 @@ export function CustomerForm({ initialValues }: CustomerProps) {
                           render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
                               <FieldLabel htmlFor="form-customer-email">
-                                E-mail do Responsável
+                                E-mail
                               </FieldLabel>
                               <Input
                                 {...field}
