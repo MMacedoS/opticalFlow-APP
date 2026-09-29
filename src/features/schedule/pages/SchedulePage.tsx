@@ -9,17 +9,17 @@ import { dayjs } from "@/common/config/dayjs.config";
 import { ScheduleForm } from "../components/ScheduleForm";
 import { useScheduleUpdate } from "../hooks/useScheduleUpdate";
 import type { ScheduleFormValues } from "../schema/scheduleSchema";
+import { useOptometristsList } from "@/features/optometrist/hooks/useOptometristList";
+import { useOphthalmologistsList } from "@/features/ophthalmologist/hooks/useOphthalmologistList";
+
+// Limite alto para o calendario mostrar todos os agendamentos do mes.
+const LIMITE_AGENDAMENTOS_MES = 500;
 
 const statusOptions = [
   { value: "agendado", label: "Agendado" },
   { value: "confirmado", label: "Confirmado" },
   { value: "cancelado", label: "Cancelado" },
   { value: "finalizado", label: "Finalizado" },
-];
-
-const profissionalOptions = [
-  { value: "1", label: "Dr. Silva (Oftalmologista)" },
-  { value: "2", label: "Dr. Souza (Optometrista)" },
 ];
 
 export function SchedulePage() {
@@ -43,20 +43,37 @@ export function SchedulePage() {
 
   const [selectedEvent, setSelectedEvent] = useState<MeuEvento | null>(null);
 
-  const startDate = dayjs(calendarDate).startOf("month").format("YYYY-MM-DD");
-  const endDate = dayjs(calendarDate).endOf("month").format("YYYY-MM-DD");
+  const inicioMes = dayjs(calendarDate).startOf("month");
+  const fimMes = dayjs(calendarDate).endOf("month");
+
+  const optometristas = useOptometristsList({ search: "", limit: 100, page: 1 });
+  const oftalmologistas = useOphthalmologistsList({
+    search: "",
+    limit: 100,
+    page: 1,
+  });
+
+  // A agenda guarda o id do usuario do profissional.
+  const profissionalOptions = [
+    ...(oftalmologistas.data?.data.ophthalmologists ?? []).map((p) => ({
+      value: p.pessoa.usuario?.id ?? p.pessoa.id,
+      label: `${p.pessoa.nome} (Oftalmologista)`,
+    })),
+    ...(optometristas.data?.data.optometrists ?? []).map((p) => ({
+      value: p.pessoa.usuario?.id ?? p.pessoa.id,
+      label: `${p.pessoa.nome} (Optometrista)`,
+    })),
+  ];
 
   const updateMutation = useScheduleUpdate();
 
   const { data, isLoading } = useScheduleList({
     search,
-    empresaId: "1",
-    filialId: "1",
     profissionalId: selectedProfissional,
-    pessoaId: "1",
     status: selectedStatus?.value,
-    startDate,
-    endDate,
+    dataInicio: inicioMes.toISOString(),
+    dataFim: fimMes.toISOString(),
+    limit: LIMITE_AGENDAMENTOS_MES,
   });
 
   const events = data?.data.events.map(prepareEventSchedule) || [];
@@ -83,9 +100,9 @@ export function SchedulePage() {
           </label>
           <Select
             options={profissionalOptions}
-            defaultValue={profissionalOptions[0]}
+            isClearable
             onChange={(option) => setSelectedProfissional(option?.value)}
-            placeholder="Selecione..."
+            placeholder="Todos os profissionais"
             className="text-sm"
           />
         </div>
@@ -94,7 +111,6 @@ export function SchedulePage() {
           <label className="text-xs font-semibold text-slate-600">Status</label>
           <Select
             options={statusOptions}
-            defaultValue={statusOptions[0]}
             isClearable
             onChange={(option) =>
               setSelectedStatus(option?.value as StatusOptions | undefined)
@@ -107,8 +123,8 @@ export function SchedulePage() {
         <div className="flex flex-col gap-1 justify-end text-right text-xs text-slate-400 pb-2">
           <p>Buscando dados de:</p>
           <p className="font-medium text-slate-600">
-            {dayjs(startDate).format("DD/MM/YYYY")} até{" "}
-            {dayjs(endDate).format("DD/MM/YYYY")}
+            {inicioMes.format("DD/MM/YYYY")} até{" "}
+            {fimMes.format("DD/MM/YYYY")}
           </p>
         </div>
       </div>

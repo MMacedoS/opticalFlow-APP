@@ -89,13 +89,11 @@ export interface ScheduleProps {
 
 export interface SchedulesListFilters {
   search?: string;
-  empresaId?: string;
-  filialId?: string;
   profissionalId?: string;
-  pessoaId?: string;
   status?: "agendado" | "confirmado" | "cancelado" | "finalizado";
-  startDate?: string; // ISO 8601 date string
-  endDate?: string; // ISO 8601 date string
+  dataInicio?: string; // ISO 8601
+  dataFim?: string; // ISO 8601
+  limit?: number;
 }
 
 export interface StatusOptions {
@@ -119,13 +117,10 @@ export interface ScheduleListResponse {
 
 export interface ScheduleListRequest {
   search?: string;
-  empresaId?: string;
-  filialId?: string;
   profissionalId?: string;
-  pessoaId?: string;
   status?: "agendado" | "confirmado" | "cancelado" | "finalizado";
-  startDate?: string; // ISO 8601 date string
-  endDate?: string; // ISO 8601 date string
+  dataInicio?: string; // ISO 8601
+  dataFim?: string; // ISO 8601
   limit?: number;
   page?: number;
 }

@@ -54,7 +54,18 @@ export function Schedule({
   };
 
   const handleSelectSlot = (slotInfo: SlotInfo) => {
-    onSelectSlot(new Date(slotInfo.start), new Date(slotInfo.end));
+    const start = new Date(slotInfo.start);
+    const end = new Date(slotInfo.end);
+
+    // Na visao de mes o slot e o dia inteiro: sugere 09:00 com 30 minutos.
+    const diaInteiro = end.getTime() - start.getTime() >= 24 * 60 * 60 * 1000;
+    if (diaInteiro) {
+      start.setHours(9, 0, 0, 0);
+      onSelectSlot(start, new Date(start.getTime() + 30 * 60 * 1000));
+      return;
+    }
+
+    onSelectSlot(start, end);
   };
 
   if (loading) {
