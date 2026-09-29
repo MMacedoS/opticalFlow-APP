@@ -184,30 +184,30 @@ export function AppointmentCard(data: Appointment) {
         }
         footer={
           <>
-            {(() => {
-              if (isOutdated) {
-                return (
-                  <Button
-                    variant="destructive"
-                    className="bg-red-600 hover:bg-red-700 text-white"
-                    onClick={() =>
-                      openAlertStandart(
-                        "Deseja cancelar este atendimento?",
-                        `O horário agendado já passou. Deseja alterar o status de "${data.paciente.nome}" para Cancelado?`,
-                        () =>
-                          handleChangeStatus({
-                            newStatus: "cancelado",
-                            id: data.id as string,
-                          }),
-                      )
-                    }
-                  >
-                    <Ban className="mr-2 h-4 w-4" />
-                    Cancelar
-                  </Button>
-                );
-              }
+            {data.status === "em_espera" && (
+              <Button
+                variant="destructive"
+                className="bg-red-600 hover:bg-red-700 text-white"
+                onClick={() =>
+                  openAlertStandart(
+                    "Deseja cancelar este atendimento?",
+                    isOutdated
+                      ? `O horário agendado já passou. Deseja alterar o status de "${data.paciente.nome}" para Cancelado?`
+                      : `O atendimento de "${data.paciente.nome}" será cancelado.`,
+                    () =>
+                      handleChangeStatus({
+                        newStatus: "cancelado",
+                        id: data.id as string,
+                      }),
+                  )
+                }
+              >
+                <Ban className="mr-2 h-4 w-4" />
+                Cancelar
+              </Button>
+            )}
 
+            {(() => {
               const actionMap: Record<
                 StatusAtendimento,
                 {
