@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { maskCNPJ, maskPhone } from "@/utils/masks";
 
 type SupplierFormProps = {
   supplier?: Supplier;
@@ -34,6 +35,11 @@ const TEXT_FIELDS = [
   { name: "email", label: "E-mail", placeholder: "contato@fornecedor.com" },
   { name: "telefone", label: "Telefone", placeholder: "(00) 00000-0000" },
 ] as const;
+
+const MASKS: Partial<Record<string, (value?: string) => string>> = {
+  cnpj: maskCNPJ,
+  telefone: maskPhone,
+};
 
 export function SupplierForm({ supplier }: SupplierFormProps) {
   const [open, setOpen] = useState(false);
@@ -95,7 +101,13 @@ export function SupplierForm({ supplier }: SupplierFormProps) {
                         {...field}
                         id={`${formId}-${name}`}
                         placeholder={placeholder}
-                        value={field.value ?? ""}
+                        value={MASKS[name]?.(field.value ?? "") ?? field.value ?? ""}
+                        onChange={(event) =>
+                          field.onChange(
+                            MASKS[name]?.(event.target.value) ??
+                              event.target.value,
+                          )
+                        }
                       />
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />
