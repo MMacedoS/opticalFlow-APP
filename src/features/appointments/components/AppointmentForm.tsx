@@ -63,9 +63,10 @@ export function AppointmentForm({
   const [searchCustomer, setSearchCustomer] = useState("");
   const [searchOftalmo, setSearchOftalmo] = useState("");
   const [searchOptometro, setSearchOptometro] = useState("");
-  const [tipoProfissional, setTipoProfissional] = useState<
-    "oftalmo" | "optometro"
-  >("oftalmo");
+  // null = ainda nao escolhido: o tipo segue o profissional ja salvo.
+  const [tipoEscolhido, setTipoProfissional] = useState<
+    "oftalmo" | "optometro" | null
+  >(null);
 
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [textAlert, setTextAlert] = useState("");
@@ -91,6 +92,15 @@ export function AppointmentForm({
     limit: 20,
     filialId: filialSelecionada,
   });
+
+  const profissionalSalvo = form.watch("profissionalId");
+  const tipoProfissional: "oftalmo" | "optometro" =
+    tipoEscolhido ??
+    (optometristas.data?.data.optometrists.some(
+      (p) => p.pessoa.usuario?.id === profissionalSalvo,
+    )
+      ? "optometro"
+      : "oftalmo");
 
   const pessoaId = form.watch("pacienteId");
   const profissionalId = form.watch("profissionalId");
@@ -578,11 +588,39 @@ export function AppointmentForm({
                             field.value ? new Date(field.value) : undefined
                           }
                           onSelect={(date) => {
-                            if (date) field.onChange(date.toISOString());
+                            if (!date) return;
+                            // Mantem o horario ja escolhido (padrao 09:00).
+                            const atual = field.value
+                              ? new Date(field.value)
+                              : null;
+                            date.setHours(
+                              atual?.getHours() ?? 9,
+                              atual?.getMinutes() ?? 0,
+                              0,
+                              0,
+                            );
+                            field.onChange(date.toISOString());
                           }}
                         />
                       </PopoverContent>
                     </Popover>
+                    <Input
+                      type="time"
+                      aria-label="Horário do atendimento"
+                      disabled={!field.value}
+                      value={
+                        field.value ? format(new Date(field.value), "HH:mm") : ""
+                      }
+                      onChange={(event) => {
+                        if (!field.value || !event.target.value) return;
+                        const [horas, minutos] = event.target.value
+                          .split(":")
+                          .map(Number);
+                        const data = new Date(field.value);
+                        data.setHours(horas, minutos, 0, 0);
+                        field.onChange(data.toISOString());
+                      }}
+                    />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -590,24 +628,6 @@ export function AppointmentForm({
                 )}
               />
 
-              <Controller
-                name="status"
-                control={form.control}
-                render={({ field }) => (
-                  <Field>
-                    <FieldLabel>Status</FieldLabel>
-                    <select
-                      {...field}
-                      className="w-full h-9.5 px-3 text-sm bg-white border border-slate-300 rounded-md focus:outline-none"
-                    >
-                      <option value="em_espera">Em Espera</option>
-                      <option value="em_andamento">Em Andamento</option>
-                      <option value="finalizado">Finalizado</option>
-                      <option value="cancelado">Cancelado</option>
-                    </select>
-                  </Field>
-                )}
-              />
 
               <Controller
                 name="queixa_principal"

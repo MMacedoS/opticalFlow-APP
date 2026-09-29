@@ -58,9 +58,10 @@ export function ScheduleForm({ initialValues, onClose }: ScheduleFormProps) {
   const [searchCustomer, setSearchCustomer] = useState("");
   const [searchOftalmo, setSearchOftalmo] = useState("");
   const [searchOptometro, setSearchOptometro] = useState("");
-  const [tipoProfissional, setTipoProfissional] = useState<
-    "oftalmo" | "optometro"
-  >("oftalmo");
+  // null = ainda nao escolhido: o tipo segue o profissional ja salvo.
+  const [tipoEscolhido, setTipoProfissional] = useState<
+    "oftalmo" | "optometro" | null
+  >(null);
 
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [textAlert, setTextAlert] = useState("");
@@ -78,6 +79,15 @@ export function ScheduleForm({ initialValues, onClose }: ScheduleFormProps) {
     page: 1,
     limit: 20,
   });
+
+  const profissionalSalvo = form.watch("profissionalId");
+  const tipoProfissional: "oftalmo" | "optometro" =
+    tipoEscolhido ??
+    (optometristas.data?.data.optometrists.some(
+      (p) => p.pessoa.usuario?.id === profissionalSalvo,
+    )
+      ? "optometro"
+      : "oftalmo");
 
   const pessoaId = form.watch("pessoaId");
   const profissionalId = form.watch("profissionalId");

@@ -30,7 +30,7 @@ export const appointmentFormSchema = z.object({
   convenioId: z.string().nullable().optional(),
   queixa_principal: z.string().nullable().optional(),
   status: z
-    .enum(["em_espera", "em_andamento", "finalizado", "cancelado"])
+    .enum(["em_espera", "em_andamento", "concluido", "cancelado"])
     .default("em_espera")
     .optional(),
   observacoes: z.string().nullable().optional(),

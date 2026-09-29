@@ -21,7 +21,12 @@ export function UpdateAppointment(
     });
     return Promise.reject(new Error("ID da atendimento não fornecido."));
   }
+  // O id vai na URL; id e temResponsavel no corpo sao recusados pela API.
+  const body = { ...payload };
+  delete body.id;
+  delete body.temResponsavel;
+
   return httpClient
-    .put<AppointmentResponse>(`/atendimento/${id}`, payload)
+    .put<AppointmentResponse>(`/atendimento/${id}`, body)
     .then((response) => response.data);
 }
