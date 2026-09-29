@@ -6,7 +6,13 @@ import type {
   SingleSectionKey,
 } from "../types/medicalRecord.type";
 
-export type FieldType = "text" | "textarea" | "number" | "datetime" | "date";
+export type FieldType =
+  | "text"
+  | "textarea"
+  | "number"
+  | "datetime"
+  | "date"
+  | "select";
 
 export interface FieldConfig {
   name: string;
@@ -14,6 +20,8 @@ export interface FieldConfig {
   type?: FieldType;
   placeholder?: string;
   required?: boolean;
+  /** Opcoes do campo do tipo select. */
+  options?: string[];
 }
 
 /** Medidas por olho: gera os campos od_<coluna> e oe_<coluna>. */
@@ -150,7 +158,8 @@ export const LIST_SECTIONS: ListSectionConfig[] = [
       {
         name: "versao",
         label: "Versão",
-        placeholder: "CID-10",
+        type: "select",
+        options: ["CID-10", "CID-11"],
         required: true,
       },
       { name: "descricao", label: "Descrição", placeholder: "Miopia" },

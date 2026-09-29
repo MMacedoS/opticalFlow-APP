@@ -41,7 +41,20 @@ export function SectionField({
           >
             {config.label}
           </FieldLabel>
-          {config.type === "textarea" ? (
+          {config.type === "select" ? (
+            <select
+              {...field}
+              id={id}
+              value={field.value ?? ""}
+              className="h-9 w-full rounded-md border bg-transparent px-3 text-sm"
+            >
+              {config.options?.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          ) : config.type === "textarea" ? (
             <Textarea
               {...field}
               id={id}
