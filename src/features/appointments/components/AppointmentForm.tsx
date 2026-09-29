@@ -29,6 +29,10 @@ import { useOptometristsList } from "@/features/optometrist/hooks/useOptometrist
 import { AlertConfirm } from "@/components/alert/AlertConfirm";
 import { useCustomerList } from "@/features/customer/hooks/useCustomerList";
 import { getProducts } from "@/features/products/api/getProduct";
+import { getPeoples } from "@/features/people/api/people";
+import { getCustomers } from "@/features/customer/api/customers";
+import { getOptometrists } from "@/features/optometrist/api/optometrist";
+import { getOphthalmologists } from "@/features/ophthalmologist/api/ophthalmologist";
 import type { Product } from "@/features/products/types/product.type";
 import type { AppointmentFormValues } from "../types/appointment.type";
 import { useAuthStore } from "@/stores/auth.store";
@@ -150,14 +154,12 @@ export function AppointmentForm({
 
     setSearchTerm(inputValue);
 
-    if (peoples.data?.data.peoples) {
-      return peoples.data.data.peoples.map((pessoa) => ({
-        value: pessoa.id,
-        label: pessoa.nome,
-      }));
-    }
-
-    return [];
+    // Busca direto na API: os dados do hook ainda sao da pesquisa anterior.
+    const response = await getPeoples({ search: inputValue, limit: 20, page: 1 });
+    return response.data.peoples.map((pessoa) => ({
+      value: pessoa.id,
+      label: pessoa.nome,
+    }));
   };
 
   const loadCustomerOptions = async (
@@ -169,14 +171,15 @@ export function AppointmentForm({
 
     setSearchCustomer(inputValue);
 
-    if (customers.data?.data.customers) {
-      return customers.data.data.customers.map((customer) => ({
-        value: customer.id,
-        label: customer.pessoa.nome,
-      }));
-    }
-
-    return [];
+    const response = await getCustomers({
+      search: inputValue,
+      limit: 20,
+      page: 1,
+    });
+    return response.data.customers.map((customer) => ({
+      value: customer.id,
+      label: customer.pessoa.nome,
+    }));
   };
 
   const loadOftalmoOptions = async (
@@ -184,12 +187,16 @@ export function AppointmentForm({
   ): Promise<SelectOption[]> => {
     if (inputValue.trim().length < 3) return [];
     setSearchOftalmo(inputValue);
-    return (
-      oftalmologistas.data?.data.ophthalmologists.map((p) => ({
-        value: p.pessoa.usuario?.id || p.pessoa.id,
-        label: p.pessoa.nome,
-      })) || []
-    );
+
+    const response = await getOphthalmologists({
+      search: inputValue,
+      limit: 20,
+      page: 1,
+    });
+    return response.data.ophthalmologists.map((p) => ({
+      value: p.pessoa.usuario?.id || p.pessoa.id,
+      label: p.pessoa.nome,
+    }));
   };
 
   const loadOptometroOptions = async (
@@ -197,12 +204,16 @@ export function AppointmentForm({
   ): Promise<SelectOption[]> => {
     if (inputValue.trim().length < 3) return [];
     setSearchOptometro(inputValue);
-    return (
-      optometristas.data?.data.optometrists.map((p) => ({
-        value: p.pessoa.usuario?.id || p.pessoa.id,
-        label: p.pessoa.nome,
-      })) || []
-    );
+
+    const response = await getOptometrists({
+      search: inputValue,
+      limit: 20,
+      page: 1,
+    });
+    return response.data.optometrists.map((p) => ({
+      value: p.pessoa.usuario?.id || p.pessoa.id,
+      label: p.pessoa.nome,
+    }));
   };
 
   const loadProdutosOptions = async (inputValue: string) => {

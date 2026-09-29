@@ -22,6 +22,7 @@ import {
   type StatusAtendimento,
 } from "@/constants/statusColorEvents";
 import dayjs from "dayjs";
+import { useAuthStore } from "@/stores/auth.store";
 
 export function AppointmentCard(data: Appointment) {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -60,6 +61,14 @@ export function AppointmentCard(data: Appointment) {
     setActionConfirm(() => action);
     setIsAlertOpen(true);
   };
+
+  // Iniciar e finalizar sao do profissional do atendimento, e iniciar so no
+  // dia marcado (as mesmas regras sao validadas na API).
+  const usuarioId = useAuthStore((state) => state.session?.usuario?.id);
+  const ehProfissionalDoAtendimento = Boolean(
+    usuarioId && data.profissionalId === usuarioId,
+  );
+  const ehDiaDoAtendimento = dayjs(data.dataAtendimento).isSame(dayjs(), "day");
 
   const isOutdated =
     dayjs().isAfter(dayjs(data.dataAtendimento)) &&
@@ -232,12 +241,21 @@ export function AppointmentCard(data: Appointment) {
 
               const currentAction = actionMap[data.status as StatusAtendimento];
 
-              if (!currentAction) return null;
+              if (!currentAction || !ehProfissionalDoAtendimento) return null;
+
+              const aguardandoDia =
+                data.status === "em_espera" && !ehDiaDoAtendimento;
 
               return (
                 <Button
                   variant={currentAction.variant}
                   className={currentAction.className}
+                  disabled={aguardandoDia}
+                  title={
+                    aguardandoDia
+                      ? "A consulta só pode ser iniciada no dia do atendimento."
+                      : undefined
+                  }
                   onClick={() =>
                     openAlertStandart(
                       currentAction.alertTitle,
