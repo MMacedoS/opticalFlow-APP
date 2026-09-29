@@ -22,23 +22,12 @@ import {
 import { DialogClose } from "@/components/ui/dialog";
 import { useProductForm } from "../hooks/useProductForm";
 import { formatCurrencyDisplay, parseCurrencyInput } from "@/utils/masks";
-import { useState } from "react";
 
 export function ProductForm({ initialValues }: ProductProps) {
   const { form, onSubmit, isPending, errorMessage } =
     useProductForm(initialValues);
 
   const isEditing = !!initialValues;
-
-  const [margemLucro, setMargemLucro] = useState<number>(() => {
-    const custo = form.getValues("preco_custo") || 0;
-    const venda = form.getValues("preco_venda") || 0;
-
-    if (custo > 0 && venda > 0 && venda > custo) {
-      return Math.round(((venda - custo) / venda) * 100);
-    }
-    return 0;
-  });
 
   const currentTipo = form.watch("tipo");
 
@@ -214,6 +203,7 @@ export function ProductForm({ initialValues }: ProductProps) {
                         const novoCusto = parseCurrencyInput(e.target.value);
                         field.onChange(novoCusto);
 
+                        const margemLucro = form.getValues("margem_lucro") || 0;
                         if (margemLucro > 0 && margemLucro < 100) {
                           const novoPrecoVenda =
                             novoCusto / (1 - margemLucro / 100);
@@ -237,7 +227,7 @@ export function ProductForm({ initialValues }: ProductProps) {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel>Margem de Lucro (%)</FieldLabel>
+                    <FieldLabel>Margem sobre a venda (%)</FieldLabel>
                     <Input
                       type="number"
                       placeholder="0%"
@@ -287,13 +277,19 @@ export function ProductForm({ initialValues }: ProductProps) {
                         );
                         field.onChange(novoPrecoVenda);
 
+                        // A margem e sobre o preco de venda e fica no proprio
+                        // formulario, para ser exibida e salva corretamente.
                         const custoAtual = form.getValues("preco_custo") || 0;
-                        if (custoAtual > 0 && novoPrecoVenda > custoAtual) {
-                          const novaMargemCalculada =
-                            ((novoPrecoVenda - custoAtual) / novoPrecoVenda) *
-                            100;
-                          setMargemLucro(Math.round(novaMargemCalculada));
-                        }
+                        const novaMargem =
+                          custoAtual > 0 && novoPrecoVenda > custoAtual
+                            ? ((novoPrecoVenda - custoAtual) / novoPrecoVenda) *
+                              100
+                            : 0;
+                        form.setValue(
+                          "margem_lucro",
+                          Math.round(novaMargem * 10) / 10,
+                          { shouldValidate: true },
+                        );
                       }}
                     />
                     {fieldState.invalid && (
