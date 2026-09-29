@@ -255,7 +255,7 @@ export function OphthalmologistForm({ initialValues }: OphthalmologistProps) {
                     form="form-ophthalmologist"
                     variant="outline"
                     size="sm"
-                    disabled={form.formState.isValid || isPending}
+                    disabled={!form.formState.isValid || isPending}
                     className="bg-primary/80 text-white hover:bg-primary/90 hover:text-primary-foreground"
                   >
                     {isPending ? "Salvando..." : "Salvar"}
